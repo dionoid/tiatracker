@@ -20,15 +20,15 @@
 #ifndef SOUND_SDL2_HXX
 #define SOUND_SDL2_HXX
 
-namespace Emulation {
-
-class OSystem;
-
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 
 #include "bspf.h"
 #include "TIASnd.h"
+
+namespace Emulation {
+
+class OSystem;
 
 /**
   This class implements the sound API for SDL.

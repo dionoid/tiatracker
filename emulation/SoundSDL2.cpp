@@ -42,7 +42,7 @@ SoundSDL2::SoundSDL2(TIASound *tiasound)
   // issues with opening and closing it multiple times
   // This fixes a bug most prevalent with ATI video cards in Windows,
   // whereby sound stopped working after the first video change
-  SDL_AudioSpec desired;
+  SDL_AudioSpec desired{};
   desired.freq   = 44100;
   desired.format = AUDIO_S16SYS;
   desired.channels = 2;
@@ -50,12 +50,18 @@ SoundSDL2::SoundSDL2(TIASound *tiasound)
   desired.callback = callback;
   desired.userdata = static_cast<void*>(this);
 
-  if(SDL_OpenAudio(&desired, &myHardwareSpec) < 0)
+  // The callback generates signed 16-bit mono/stereo samples. Passing an
+  // obtained spec would allow SDL to change that format (e.g. to WASAPI's
+  // 32-bit float format). Let SDL convert to the device format instead.
+  if(SDL_OpenAudio(&desired, nullptr) < 0)
   {
     std::cerr << "WARNING: Couldn't open SDL audio system!\n"
         << "         " << SDL_GetError() << "\n";
     return;
   }
+
+  // With no obtained spec, SDL updates desired with the callback buffer size.
+  myHardwareSpec = desired;
 
   // Make sure the sample buffer isn't to big (if it is the sound code
   // will not work so we'll need to disable the audio support)
@@ -317,9 +323,7 @@ void SoundSDL2::callback(void* udata, uInt8* stream, int len)
   SoundSDL2* sound = static_cast<SoundSDL2*>(udata);
   if(sound->myIsEnabled)
   {
-    // The callback is requesting 8-bit (unsigned) data, but the TIA sound
-    // emulator deals in 16-bit (signed) data
-    // So, we need to convert the pointer and half the length
+    // SDL supplies a byte count for our signed 16-bit sample buffer.
     sound->processFragment(reinterpret_cast<Int16*>(stream), uInt32(len) >> 1);
   }
   else

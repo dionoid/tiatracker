@@ -37,4 +37,72 @@ For feedback, bug reports and feature requests, send a mail to andre.wichmann@gm
 
 ## Compiling from source
 
-You need Qt5 and SDL to build TIATracker from source. Open the project in Qt Creator and add a "make install" build step to the project, then compile it.
+TIATracker requires Qt 5, SDL2 and a C++ compiler. Qt Creator is optional.
+
+### Windows: MSYS2 UCRT64
+
+You can build a native 64-bit Windows version of TIATracker using MSYS2.
+**Install MSYS2 first** if you do not already have it:
+
+1. Download the x86_64 installer from the [official MSYS2 website](https://www.msys2.org/).
+2. Run the installer and follow its setup instructions. The default installation
+   folder is `C:\msys64`.
+3. Open **MSYS2 UCRT64** from the Windows Start menu.
+
+Run the commands below in that UCRT64 terminal. First, install the build dependencies:
+
+```sh
+pacman -S --needed make mingw-w64-ucrt-x86_64-gcc \
+  mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-pkgconf \
+  mingw-w64-ucrt-x86_64-qt5-base mingw-w64-ucrt-x86_64-SDL2
+```
+
+These include MSYS2's [Qt 5](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-qt5-base)
+and [SDL2](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-SDL2)
+packages for UCRT64. Use the UCRT64 packages together so the compiler and libraries match.
+
+From the repository directory, build and launch with:
+
+```sh
+make
+make run
+```
+
+The Makefile runs `qmake-qt5` (or `qmake` on older MSYS2 installations) and
+`mingw32-make`, then copies the required data,
+player sources and examples to `build/ucrt64/`. It uses the installed SDL2
+package. You do not need a separate `make install` step.
+
+The executable is `build/ucrt64/TIATracker.exe`. `make run` starts it from that
+directory so it can find its data. Run from the UCRT64 terminal so the Qt and
+SDL2 DLLs are available on `PATH`.
+
+To run from Windows Explorer without an MSYS2 terminal, create a Windows bundle:
+
+```sh
+make deploy
+```
+
+Double-click `build/windows/TIATracker.exe`. This folder includes the application
+data, Qt plugins, SDL2, compiler runtime DLLs and their dependencies. Copy or zip
+the **entire `build/windows/` folder**, rather than just the executable. No changes
+to the Windows `PATH` are needed. Run `make deploy` again after rebuilding or
+updating dependencies to refresh the bundle. It overwrites the bundled data and
+examples, so save your own songs outside the build folder.
+
+Other commands:
+
+```sh
+make JOBS=8    # Compile with eight parallel jobs (default: four)
+make clean     # Remove compiled files; keep the copied data and examples
+```
+
+Qt's tools still generate the UI, resource and meta-object code from the
+existing `TIATracker.pro` project. The top-level Makefile provides the command-line
+entry point; invoke it with `make`, not `mingw32-make`.
+
+### Qt Creator
+
+Open `TIATracker.pro` in Qt Creator and add a `make install` build step, then
+compile it. When using an MSYS2 UCRT64 kit, add `CONFIG+=system_sdl` to the qmake
+arguments to use the installed SDL2 package.
