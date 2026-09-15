@@ -208,6 +208,7 @@ void MainWindow::initConnections() {
     QObject::connect(ui->trackEditor, SIGNAL(channelContextEvent(int,int)), ui->tabTrack, SLOT(channelContextEvent(int,int)));
     QObject::connect(ui->tabTrack, SIGNAL(advanceEditPos()), ui->trackEditor, SLOT(advanceEditPos()));
     QObject::connect(ui->checkBoxFollow, SIGNAL(toggled(bool)), ui->trackEditor, SLOT(toggleFollow_clicked(bool)));
+    ui->checkBoxFollow->setChecked(true);
     QObject::connect(ui->checkBoxLoop, SIGNAL(toggled(bool)), ui->trackEditor, SLOT(toggleLoop_clicked(bool)));
 
     // Timeline
@@ -490,7 +491,7 @@ void MainWindow::loadTrackByName(const QString &fileName) {
 
 void MainWindow::setTrackName(QString name) {
     pTrack->name = name;
-    setWindowTitle("TIATracker v1.3 - " + pTrack->name);
+    setWindowTitle("TIATracker v1.3.1 - " + pTrack->name);
 }
 
 /*************************************************************************/
