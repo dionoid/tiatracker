@@ -149,14 +149,14 @@ QWidget#widgetInfoTable > QLabel {
 
 QGroupBox {
     border: 1px solid #002b36;
-    margin-top: 1ex;
+    margin-top: 1em;
 }
 QGroupBox::title {
     color: #002b36;
     subcontrol-origin: margin;
     subcontrol-position: top left;
     left: 16px;
-    top: -1ex;
+    top: 0.5em;
     padding: 0px 8px 0px 8px;
 }
 
