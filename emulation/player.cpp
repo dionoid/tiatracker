@@ -63,35 +63,35 @@ void Player::startTimer() {
     elapsedTimer.start();
     double lastReplayTime = 0;
     doReplay = true;
-    unsigned long long timestamp;
     // Replay loop
     while (doReplay) {
-        double frameDuration = replayTvStandard == TiaSound::TvStandard::PAL ? 1000.0/50.0 : 1000.0/60.0;
-        // Wait and allow events until shortly before next update
-        while (elapsedTimer.elapsed() < lastReplayTime + (frameDuration - 10.0)) {
+        const double frameDuration = replayTvStandard == TiaSound::TvStandard::PAL ? 1000.0/50.0 : 1000.0/60.0;
+        // Keep sub-millisecond precision for NTSC's fractional frame interval.
+        double timestamp = elapsedTimer.nsecsElapsed() / 1000000.0;
+        // Handle playback commands while yielding the CPU between updates.
+        while (doReplay && timestamp < lastReplayTime + frameDuration) {
             QCoreApplication::processEvents(QEventLoop::AllEvents, 5);
+            if (!doReplay) {
+                break;
+            }
+            timestamp = elapsedTimer.nsecsElapsed() / 1000000.0;
+            if (timestamp < lastReplayTime + frameDuration) {
+                QThread::msleep(1);
+                timestamp = elapsedTimer.nsecsElapsed() / 1000000.0;
+            }
         }
-        // Busy-wait until next update
-        do {
-            timestamp = elapsedTimer.elapsed();
-        } while (timestamp < lastReplayTime + frameDuration);
-        // Do updates
-        while (lastReplayTime < timestamp) {
+        // Catch up only completed frame intervals, keeping the original clock
+        // schedule so late wakeups do not accumulate drift or play frames early.
+        while (doReplay && lastReplayTime + frameDuration <= timestamp) {
             timerFired();
             lastReplayTime += frameDuration;
         }
     }
-
-/*
-    eTimer = new QElapsedTimer;
-    eTimer->start();
-*/
 }
 
 /*************************************************************************/
 
 void Player::stopTimer() {
-    //timer->stop();
     doReplay = false;
 }
 
