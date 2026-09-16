@@ -1,0 +1,30 @@
+{
+    "envelopeLength": 6,
+    "frequencies": [
+        29,
+        24,
+        19,
+        29,
+        24,
+        19
+    ],
+    "name": "sqbar",
+    "overlay": false,
+    "version": 1,
+    "volumes": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+    ],
+    "waveforms": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+    ]
+}

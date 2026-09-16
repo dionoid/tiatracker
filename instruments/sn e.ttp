@@ -1,0 +1,36 @@
+{
+    "envelopeLength": 8,
+    "frequencies": [
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11
+    ],
+    "name": "sn e",
+    "overlay": false,
+    "version": 1,
+    "volumes": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        0
+    ],
+    "waveforms": [
+        8,
+        8,
+        8,
+        6,
+        6,
+        6,
+        6,
+        6
+    ]
+}

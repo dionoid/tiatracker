@@ -1,0 +1,28 @@
+{
+    "envelopeLength": 8,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "sq",
+    "releaseStart": 7,
+    "sustainStart": 6,
+    "version": 1,
+    "volumes": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        4,
+        4
+    ],
+    "waveform": 16
+}

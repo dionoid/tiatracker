@@ -1,0 +1,18 @@
+{
+    "envelopeLength": 3,
+    "frequencies": [
+        0,
+        0,
+        0
+    ],
+    "name": "short bip",
+    "releaseStart": 2,
+    "sustainStart": 1,
+    "version": 1,
+    "volumes": [
+        9,
+        0,
+        0
+    ],
+    "waveform": 16
+}

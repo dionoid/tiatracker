@@ -1,0 +1,30 @@
+{
+    "envelopeLength": 6,
+    "frequencies": [
+        5,
+        9,
+        12,
+        23,
+        23,
+        23
+    ],
+    "name": "k fq",
+    "overlay": true,
+    "version": 1,
+    "volumes": [
+        12,
+        7,
+        5,
+        1,
+        1,
+        1
+    ],
+    "waveforms": [
+        6,
+        6,
+        6,
+        1,
+        1,
+        1
+    ]
+}

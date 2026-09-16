@@ -1,0 +1,30 @@
+{
+    "envelopeLength": 6,
+    "frequencies": [
+        0,
+        26,
+        26,
+        26,
+        26,
+        26
+    ],
+    "name": "tds",
+    "overlay": true,
+    "version": 1,
+    "volumes": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+    ],
+    "waveforms": [
+        8,
+        1,
+        1,
+        1,
+        1,
+        1
+    ]
+}

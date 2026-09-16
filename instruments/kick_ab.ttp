@@ -1,0 +1,18 @@
+{
+    "envelopeLength": 2,
+    "frequencies": [
+        7,
+        16
+    ],
+    "name": "kick_a",
+    "overlay": true,
+    "version": 1,
+    "volumes": [
+        13,
+        13
+    ],
+    "waveforms": [
+        6,
+        6
+    ]
+}

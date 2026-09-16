@@ -1,0 +1,26 @@
+{
+    "envelopeLength": 7,
+    "frequencies": [
+        0,
+        0,
+        -1,
+        -1,
+        -2,
+        -2,
+        0
+    ],
+    "name": "tre",
+    "releaseStart": 6,
+    "sustainStart": 0,
+    "version": 1,
+    "volumes": [
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0
+    ],
+    "waveform": 1
+}

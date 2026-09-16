@@ -1,0 +1,38 @@
+{
+    "envelopeLength": 13,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "sqa",
+    "releaseStart": 12,
+    "sustainStart": 11,
+    "version": 1,
+    "volumes": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        4,
+        4
+    ],
+    "waveform": 16
+}

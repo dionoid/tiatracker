@@ -1,0 +1,30 @@
+{
+    "envelopeLength": 6,
+    "frequencies": [
+        26,
+        22,
+        16,
+        26,
+        22,
+        16
+    ],
+    "name": "sqbarr2",
+    "overlay": false,
+    "version": 1,
+    "volumes": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+    ],
+    "waveforms": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+    ]
+}

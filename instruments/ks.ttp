@@ -1,0 +1,27 @@
+{
+    "envelopeLength": 5,
+    "frequencies": [
+        5,
+        12,
+        19,
+        2,
+        2
+    ],
+    "name": "ks",
+    "overlay": true,
+    "version": 1,
+    "volumes": [
+        10,
+        10,
+        10,
+        5,
+        5
+    ],
+    "waveforms": [
+        6,
+        6,
+        8,
+        8,
+        8
+    ]
+}

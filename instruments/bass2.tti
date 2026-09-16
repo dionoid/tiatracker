@@ -1,0 +1,28 @@
+{
+    "envelopeLength": 8,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "bass2",
+    "releaseStart": 7,
+    "sustainStart": 6,
+    "version": 1,
+    "volumes": [
+        15,
+        14,
+        13,
+        11,
+        7,
+        0,
+        0,
+        0
+    ],
+    "waveform": 2
+}

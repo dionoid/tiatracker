@@ -1,0 +1,42 @@
+{
+    "envelopeLength": 15,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "bas",
+    "releaseStart": 14,
+    "sustainStart": 13,
+    "version": 1,
+    "volumes": [
+        4,
+        4,
+        4,
+        4,
+        3,
+        3,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    ],
+    "waveform": 1
+}

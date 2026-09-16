@@ -1,0 +1,30 @@
+{
+    "envelopeLength": 6,
+    "frequencies": [
+        14,
+        14,
+        14,
+        13,
+        13,
+        13
+    ],
+    "name": "trl1",
+    "overlay": false,
+    "version": 1,
+    "volumes": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+    ],
+    "waveforms": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+    ]
+}

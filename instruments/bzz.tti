@@ -1,0 +1,38 @@
+{
+    "envelopeLength": 13,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "bzz",
+    "releaseStart": 12,
+    "sustainStart": 11,
+    "version": 1,
+    "volumes": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        3,
+        3
+    ],
+    "waveform": 1
+}

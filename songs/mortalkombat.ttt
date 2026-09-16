@@ -1,0 +1,1887 @@
+{
+    "channels": [
+        {
+            "sequence": [
+                {
+                    "gototarget": -1,
+                    "patternindex": 1
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 4
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 5
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 0
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 6
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 4
+                },
+                {
+                    "gototarget": 1,
+                    "patternindex": 5
+                }
+            ]
+        },
+        {
+            "sequence": [
+                {
+                    "gototarget": -1,
+                    "patternindex": 2
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": -1,
+                    "patternindex": 3
+                },
+                {
+                    "gototarget": 1,
+                    "patternindex": 3
+                }
+            ]
+        }
+    ],
+    "evenspeed": 7,
+    "globalspeed": false,
+    "instruments": [
+        {
+            "envelopeLength": 49,
+            "frequencies": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "name": "---",
+            "releaseStart": 1,
+            "sustainStart": 0,
+            "version": 1,
+            "volumes": [
+                7,
+                6,
+                5,
+                4,
+                5,
+                6,
+                7,
+                6,
+                5,
+                4,
+                5,
+                6,
+                7,
+                6,
+                5,
+                4,
+                5,
+                6,
+                7,
+                6,
+                5,
+                4,
+                3,
+                2,
+                3,
+                4,
+                5,
+                6,
+                5,
+                4,
+                3,
+                2,
+                1,
+                2,
+                3,
+                4,
+                5,
+                4,
+                3,
+                2,
+                1,
+                2,
+                3,
+                4,
+                3,
+                2,
+                1,
+                2,
+                2
+            ],
+            "waveform": 12
+        },
+        {
+            "envelopeLength": 6,
+            "frequencies": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "name": "aea",
+            "releaseStart": 3,
+            "sustainStart": 2,
+            "version": 1,
+            "volumes": [
+                6,
+                3,
+                3,
+                3,
+                3,
+                3
+            ],
+            "waveform": 16
+        },
+        {
+            "envelopeLength": 6,
+            "frequencies": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "name": "aeae",
+            "releaseStart": 3,
+            "sustainStart": 2,
+            "version": 1,
+            "volumes": [
+                9,
+                6,
+                5,
+                5,
+                5,
+                5
+            ],
+            "waveform": 16
+        },
+        {
+            "envelopeLength": 6,
+            "frequencies": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "name": "bas1",
+            "releaseStart": 5,
+            "sustainStart": 4,
+            "version": 1,
+            "volumes": [
+                9,
+                7,
+                5,
+                4,
+                3,
+                3
+            ],
+            "waveform": 15
+        },
+        {
+            "envelopeLength": 6,
+            "frequencies": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "name": "bas2",
+            "releaseStart": 5,
+            "sustainStart": 4,
+            "version": 1,
+            "volumes": [
+                7,
+                5,
+                3,
+                2,
+                2,
+                2
+            ],
+            "waveform": 1
+        },
+        {
+            "envelopeLength": 2,
+            "frequencies": [
+                0,
+                0
+            ],
+            "name": "---",
+            "releaseStart": 1,
+            "sustainStart": 0,
+            "version": 1,
+            "volumes": [
+                0,
+                0
+            ],
+            "waveform": 16
+        },
+        {
+            "envelopeLength": 2,
+            "frequencies": [
+                0,
+                0
+            ],
+            "name": "---",
+            "releaseStart": 1,
+            "sustainStart": 0,
+            "version": 1,
+            "volumes": [
+                0,
+                0
+            ],
+            "waveform": 16
+        }
+    ],
+    "metaAuthor": "",
+    "metaComment": "",
+    "metaName": "",
+    "oddspeed": 7,
+    "patterns": [
+        {
+            "evenspeed": 7,
+            "name": "Intro left",
+            "notes": [
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 19
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 19
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 56
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 47
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 3,
+                    "value": 50
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 47
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 12,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 56
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 59
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 63
+                },
+                {
+                    "number": 1,
+                    "type": 3,
+                    "value": 61
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 59
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 56
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 24
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 12,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                }
+            ],
+            "oddspeed": 7
+        },
+        {
+            "evenspeed": 3,
+            "name": "New pattern",
+            "notes": [
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 47
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 2,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 23
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 2,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 47
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 56
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 47
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 3,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 23
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 3,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 47
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 56
+                }
+            ],
+            "oddspeed": 4
+        },
+        {
+            "evenspeed": 7,
+            "name": "New pattern ech",
+            "notes": [
+                {
+                    "number": 4,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 5,
+                    "type": 3,
+                    "value": 47
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 2,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 4,
+                    "type": 3,
+                    "value": 27
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 23
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 5,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 47
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 4,
+                    "type": 3,
+                    "value": 52
+                },
+                {
+                    "number": 1,
+                    "type": 1,
+                    "value": 56
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 52
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 50
+                },
+                {
+                    "number": 5,
+                    "type": 3,
+                    "value": 47
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 3,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 4,
+                    "type": 3,
+                    "value": 27
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 23
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 31
+                },
+                {
+                    "number": 4,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 45
+                },
+                {
+                    "number": 4,
+                    "type": 3,
+                    "value": 47
+                },
+                {
+                    "number": 2,
+                    "type": 1,
+                    "value": 50
+                }
+            ],
+            "oddspeed": 7
+        },
+        {
+            "evenspeed": 7,
+            "name": "bassyx",
+            "notes": [
+                {
+                    "number": 8,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 3,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 3,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 8,
+                    "type": 3,
+                    "value": 13
+                },
+                {
+                    "number": 3,
+                    "type": 1,
+                    "value": 22
+                },
+                {
+                    "number": 3,
+                    "type": 1,
+                    "value": 27
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 8,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 4,
+                    "type": 1,
+                    "value": 29
+                },
+                {
+                    "number": 4,
+                    "type": 1,
+                    "value": 29
+                },
+                {
+                    "number": 8,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 4,
+                    "type": 1,
+                    "value": 24
+                },
+                {
+                    "number": 4,
+                    "type": 1,
+                    "value": 29
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                }
+            ],
+            "oddspeed": 7
+        },
+        {
+            "evenspeed": 7,
+            "name": "intro2",
+            "notes": [
+                {
+                    "number": 6,
+                    "type": 3,
+                    "value": 18
+                },
+                {
+                    "number": 6,
+                    "type": 0,
+                    "value": 24
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 14
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 7,
+                    "type": 3,
+                    "value": 14
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 7,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 7,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                }
+            ],
+            "oddspeed": 7
+        },
+        {
+            "evenspeed": 7,
+            "name": "intro2x",
+            "notes": [
+                {
+                    "number": 11,
+                    "type": 3,
+                    "value": 18
+                },
+                {
+                    "number": 6,
+                    "type": 0,
+                    "value": 24
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 14
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 11,
+                    "type": 3,
+                    "value": 14
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 11,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 11,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 9,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 10,
+                    "type": 3,
+                    "value": 0
+                }
+            ],
+            "oddspeed": 7
+        },
+        {
+            "evenspeed": 7,
+            "name": "clnup",
+            "notes": [
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 13
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 15
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 18
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 20
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 13,
+                    "type": 3,
+                    "value": 15
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 18
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 2,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 14,
+                    "type": 3,
+                    "value": 0
+                },
+                {
+                    "number": 14,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 1,
+                    "value": 18
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 2,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                },
+                {
+                    "number": 0,
+                    "type": 0,
+                    "value": 0
+                }
+            ],
+            "oddspeed": 7
+        }
+    ],
+    "percussion": [
+        {
+            "envelopeLength": 14,
+            "frequencies": [
+                18,
+                18,
+                18,
+                18,
+                18,
+                15,
+                15,
+                15,
+                15,
+                18,
+                18,
+                18,
+                18,
+                18
+            ],
+            "name": "trill",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7
+            ],
+            "waveforms": [
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12
+            ]
+        },
+        {
+            "envelopeLength": 20,
+            "frequencies": [
+                30,
+                30,
+                29,
+                29,
+                28,
+                28,
+                27,
+                27,
+                26,
+                26,
+                25,
+                25,
+                24,
+                24,
+                24,
+                24,
+                24,
+                24,
+                24,
+                24
+            ],
+            "name": "pbend",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7
+            ],
+            "waveforms": [
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12
+            ]
+        },
+        {
+            "envelopeLength": 7,
+            "frequencies": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+            ],
+            "name": "gs",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                4,
+                3,
+                1,
+                1,
+                1,
+                1,
+                1
+            ],
+            "waveforms": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+            ]
+        },
+        {
+            "envelopeLength": 7,
+            "frequencies": [
+                4,
+                4,
+                4,
+                4,
+                4,
+                4,
+                4
+            ],
+            "name": "gst",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                4,
+                3,
+                2,
+                2,
+                2,
+                2,
+                2
+            ],
+            "waveforms": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+            ]
+        },
+        {
+            "envelopeLength": 4,
+            "frequencies": [
+                5,
+                7,
+                10,
+                14
+            ],
+            "name": "high",
+            "overlay": true,
+            "version": 1,
+            "volumes": [
+                12,
+                10,
+                9,
+                8
+            ],
+            "waveforms": [
+                6,
+                6,
+                6,
+                6
+            ]
+        },
+        {
+            "envelopeLength": 4,
+            "frequencies": [
+                7,
+                9,
+                12,
+                19
+            ],
+            "name": "low",
+            "overlay": true,
+            "version": 1,
+            "volumes": [
+                12,
+                10,
+                8,
+                7
+            ],
+            "waveforms": [
+                6,
+                6,
+                6,
+                6
+            ]
+        },
+        {
+            "envelopeLength": 28,
+            "frequencies": [
+                0,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24
+            ],
+            "name": "arp1",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                10,
+                8,
+                7,
+                6,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2
+            ],
+            "waveforms": [
+                8,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12
+            ]
+        },
+        {
+            "envelopeLength": 28,
+            "frequencies": [
+                0,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24,
+                18,
+                24
+            ],
+            "name": "arp1xx",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                10,
+                5,
+                4,
+                3,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+            ],
+            "waveforms": [
+                8,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12
+            ]
+        },
+        {
+            "envelopeLength": 4,
+            "frequencies": [
+                9,
+                7,
+                10,
+                14
+            ],
+            "name": "high",
+            "overlay": true,
+            "version": 1,
+            "volumes": [
+                10,
+                10,
+                9,
+                8
+            ],
+            "waveforms": [
+                8,
+                6,
+                6,
+                6
+            ]
+        },
+        {
+            "envelopeLength": 4,
+            "frequencies": [
+                0,
+                9,
+                12,
+                19
+            ],
+            "name": "low",
+            "overlay": true,
+            "version": 1,
+            "volumes": [
+                10,
+                10,
+                8,
+                7
+            ],
+            "waveforms": [
+                8,
+                6,
+                6,
+                6
+            ]
+        },
+        {
+            "envelopeLength": 7,
+            "frequencies": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "name": "tss",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                5,
+                3,
+                2,
+                1,
+                1,
+                1,
+                1
+            ],
+            "waveforms": [
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8
+            ]
+        },
+        {
+            "envelopeLength": 1,
+            "frequencies": [
+                0
+            ],
+            "name": "tck",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                10
+            ],
+            "waveforms": [
+                8
+            ]
+        },
+        {
+            "envelopeLength": 3,
+            "frequencies": [
+                0,
+                7,
+                14
+            ],
+            "name": "lowss",
+            "overlay": true,
+            "version": 1,
+            "volumes": [
+                12,
+                12,
+                10
+            ],
+            "waveforms": [
+                8,
+                6,
+                6
+            ]
+        },
+        {
+            "envelopeLength": 4,
+            "frequencies": [
+                19,
+                19,
+                19,
+                19
+            ],
+            "name": "grace",
+            "overlay": true,
+            "version": 1,
+            "volumes": [
+                7,
+                7,
+                7,
+                7
+            ],
+            "waveforms": [
+                12,
+                12,
+                12,
+                12
+            ]
+        },
+        {
+            "envelopeLength": 14,
+            "frequencies": [
+                18,
+                18,
+                18,
+                18,
+                18,
+                15,
+                15,
+                15,
+                15,
+                20,
+                20,
+                20,
+                20,
+                20
+            ],
+            "name": "trill",
+            "overlay": false,
+            "version": 1,
+            "volumes": [
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7,
+                7
+            ],
+            "waveforms": [
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12,
+                12
+            ]
+        }
+    ],
+    "rowsperbeat": 4,
+    "startpattern0": 0,
+    "startpattern1": 0,
+    "tvmode": "ntsc",
+    "version": 1
+}

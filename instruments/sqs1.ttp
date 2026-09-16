@@ -1,0 +1,30 @@
+{
+    "envelopeLength": 6,
+    "frequencies": [
+        11,
+        13,
+        18,
+        11,
+        13,
+        18
+    ],
+    "name": "sqs1",
+    "overlay": false,
+    "version": 1,
+    "volumes": [
+        8,
+        6,
+        5,
+        6,
+        4,
+        4
+    ],
+    "waveforms": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+    ]
+}

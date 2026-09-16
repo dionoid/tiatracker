@@ -1,0 +1,20 @@
+{
+    "envelopeLength": 4,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "Chords",
+    "releaseStart": 3,
+    "sustainStart": 2,
+    "version": 1,
+    "volumes": [
+        13,
+        13,
+        0,
+        0
+    ],
+    "waveform": 12
+}

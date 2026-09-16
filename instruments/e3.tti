@@ -1,0 +1,34 @@
+{
+    "envelopeLength": 11,
+    "frequencies": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "name": "---",
+    "releaseStart": 10,
+    "sustainStart": 9,
+    "version": 1,
+    "volumes": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        0,
+        0
+    ],
+    "waveform": 16
+}
