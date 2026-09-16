@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     w.initPlayer();
 
     w.updateAllTabs();
-    w.rememberNewTrack();
+    w.rememberUnmodifiedTrack();
 
     // Shrink window size to minimum and show
     w.resize(0, 0);

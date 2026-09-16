@@ -31,6 +31,7 @@
 #include <QFileInfo>
 #include <QDesktopServices>
 #include <QCloseEvent>
+#include <QSaveFile>
 #include <QSettings>
 
 
@@ -451,7 +452,7 @@ void MainWindow::on_actionSave_triggered() {
 /*************************************************************************/
 
 void MainWindow::saveTrackByName(const QString &fileName) {
-    QFile saveFile(fileName);
+    QSaveFile saveFile(fileName);
     // Export track
     if (!saveFile.open(QIODevice::WriteOnly)) {
         displayMessage("Unable to open file!");
@@ -460,18 +461,22 @@ void MainWindow::saveTrackByName(const QString &fileName) {
     QJsonObject trackObject;
     pTrack->toJson(trackObject);
     QJsonDocument saveDoc(trackObject);
-    saveFile.write(saveDoc.toJson());
-    saveFile.close();
+    const QByteArray data = saveDoc.toJson();
+    if (saveFile.write(data) != data.size() || !saveFile.commit()) {
+        displayMessage("Unable to save file!");
+        return;
+    }
     setTrackName(fileName);
+    unmodifiedTrackState = trackObject;
 }
 
 /*************************************************************************/
 
-void MainWindow::loadTrackByName(const QString &fileName) {
+bool MainWindow::loadTrackByName(const QString &fileName) {
     QFile loadFile(fileName);
     if (!loadFile.open(QIODevice::ReadOnly)) {
         displayMessage("Unable to open file!");
-        return;
+        return false;
     }
     QJsonDocument loadDoc(QJsonDocument::fromJson(loadFile.readAll()));
 
@@ -479,13 +484,13 @@ void MainWindow::loadTrackByName(const QString &fileName) {
     // Parse in data
     if (!pTrack->fromJson(loadDoc.object())) {
         pTrack->unlock();
-        return;
+        return false;
     }
     pTrack->unlock();
     setTrackName(fileName);
-    newTrackState = QJsonObject();
     ui->trackEditor->setEditPos(0);
     updateAllTabs();
+    return true;
 }
 
 /*************************************************************************/
@@ -678,7 +683,9 @@ void MainWindow::on_actionOpen_triggered() {
     }
     QString fileName = fileNames[0];
     curSongsDialogPath = dialog.directory().absolutePath();
-    loadTrackByName(fileName);
+    if (!loadTrackByName(fileName)) {
+        return;
+    }
     // Create pitch guide if not there already
     if (pTrack->guideBaseFreq != 0.0) {
         bool isNewGuide = true;
@@ -707,6 +714,7 @@ void MainWindow::on_actionOpen_triggered() {
     }
 
     ui->trackEditor->setEditPos(0);
+    rememberUnmodifiedTrack();
     update();
 }
 
@@ -714,13 +722,7 @@ void MainWindow::on_actionOpen_triggered() {
 
 void MainWindow::on_actionQuit_triggered() {
     emit stopTrack();
-    // Ask if current track should really be discarded
-    QMessageBox msgBox(QMessageBox::NoIcon,
-                       "Quit",
-                       "Do you really want to quit?",
-                       QMessageBox::Yes | QMessageBox::No, this,
-                       Qt::FramelessWindowHint);
-    if (msgBox.exec() != QMessageBox::Yes) {
+    if (!confirmDiscardTrack("Quit")) {
         return;
     }
 
@@ -807,16 +809,16 @@ void MainWindow::on_actionNew_triggered() {
     pTrack->unlock();
     QComboBox *cbGuides = findChild<QComboBox *>("comboBoxPitchGuide");
     cbGuides->setCurrentIndex(0);
-    rememberNewTrack();
+    rememberUnmodifiedTrack();
     update();
 }
 
 /*************************************************************************/
 
-void MainWindow::rememberNewTrack() {
-    // Capture after UI initialization, which can update track settings.
-    newTrackState = QJsonObject();
-    pTrack->toJson(newTrackState);
+void MainWindow::rememberUnmodifiedTrack() {
+    // Capture after UI updates, which can update track settings.
+    unmodifiedTrackState = QJsonObject();
+    pTrack->toJson(unmodifiedTrackState);
 }
 
 /*************************************************************************/
@@ -824,7 +826,7 @@ void MainWindow::rememberNewTrack() {
 bool MainWindow::confirmDiscardTrack(const QString &title) {
     QJsonObject currentState;
     pTrack->toJson(currentState);
-    if (currentState == newTrackState) {
+    if (currentState == unmodifiedTrackState) {
         return true;
     }
 

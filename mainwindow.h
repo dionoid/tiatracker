@@ -70,7 +70,7 @@ public:
 
     void updateAllTabs();
 
-    void rememberNewTrack();
+    void rememberUnmodifiedTrack();
 
     static QJsonObject keymap;
 
@@ -165,7 +165,7 @@ private:
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
     void saveTrackByName(const QString &fileName);
-    void loadTrackByName(const QString &fileName);
+    bool loadTrackByName(const QString &fileName);
     bool confirmDiscardTrack(const QString &title);
 
     void setTrackName(QString name);
@@ -189,7 +189,7 @@ private:
 
     Ui::MainWindow *ui = nullptr;
     Track::Track *pTrack = nullptr;
-    QJsonObject newTrackState;
+    QJsonObject unmodifiedTrackState;
     TiaSound::PitchGuideFactory pgFactory;
     TiaSound::PitchGuide curPitchGuide = pgFactory.getPitchPerfectPalGuide();
 
