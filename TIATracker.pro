@@ -4,6 +4,10 @@
 #
 #-------------------------------------------------
 
+!equals(QT_MAJOR_VERSION, 5)|lessThan(QT_MINOR_VERSION, 15) {
+    error("TIATracker requires Qt 5.15 or newer within Qt 5.")
+}
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

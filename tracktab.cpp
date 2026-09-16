@@ -5,6 +5,7 @@
  * of this file.
  */
 
+#include <utility>
 #include "tracktab.h"
 #include <QPushButton>
 #include <QLayout>
@@ -299,7 +300,8 @@ void TrackTab::movePatternUp(bool) {
     int entryIndex = pTrack->getSequenceEntryIndex(contextEventChannel, contextEventNoteIndex);
     if (entryIndex > 0) {
         emit stopTrack();
-        pTrack->channelSequences[contextEventChannel].sequence.swap(entryIndex, entryIndex - 1);
+        auto &sequence = pTrack->channelSequences[contextEventChannel].sequence;
+        std::swap(sequence[entryIndex], sequence[entryIndex - 1]);
         pTrack->updateFirstNoteNumbers();
         update();
     }
@@ -311,7 +313,8 @@ void TrackTab::movePatternDown(bool) {
     int entryIndex = pTrack->getSequenceEntryIndex(contextEventChannel, contextEventNoteIndex);
     if (entryIndex != pTrack->channelSequences[contextEventChannel].sequence.size() - 1) {
         emit stopTrack();
-        pTrack->channelSequences[contextEventChannel].sequence.swap(entryIndex, entryIndex + 1);
+        auto &sequence = pTrack->channelSequences[contextEventChannel].sequence;
+        std::swap(sequence[entryIndex], sequence[entryIndex + 1]);
         pTrack->updateFirstNoteNumbers();
         update();
     }

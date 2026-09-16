@@ -125,9 +125,14 @@ void WaveformShaper::mousePressEvent(QMouseEvent *event) {
 /*************************************************************************/
 
 void WaveformShaper::wheelEvent(QWheelEvent *event) {
-    if (event->x() >= legendCellSize && event->y() < valueAreaHeight) {
-        int column = (event->x() - legendCellSize)/cellWidth;
-        int delta = event->delta()/100;
+    const QPoint angleDelta = event->angleDelta();
+    const int wheelDelta = angleDelta.y() != 0 ? angleDelta.y() : angleDelta.x();
+    const QPointF position = event->position();
+    const int x = static_cast<int>(position.x());
+    const int y = static_cast<int>(position.y());
+    if (x >= legendCellSize && y < valueAreaHeight) {
+        int column = (x - legendCellSize)/cellWidth;
+        int delta = wheelDelta/100;
         // Get index of current waveform
         TiaSound::Distortion oldDist = (*values)[column];
         int oldIndex = PercussionTab::availableWaveforms.indexOf(oldDist);

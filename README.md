@@ -37,7 +37,7 @@ For feedback, bug reports and feature requests, send a mail to andre.wichmann@gm
 
 ## Compiling from source
 
-TIATracker requires Qt 5, SDL2 and a C++ compiler. Qt Creator is optional.
+TIATracker requires Qt 5.15, SDL2 and a C++ compiler. Qt Creator is optional.
 
 ### Windows: MSYS2 UCRT64
 
@@ -77,9 +77,9 @@ The executable is `build/ucrt64/TIATracker.exe`. `make run` starts it from that
 directory so it can find its data. Run from the UCRT64 terminal so the Qt and
 SDL2 DLLs are available on `PATH`.
 
-With Qt 5.6 or newer, the interface follows your display's DPI scaling, including
+The interface follows your display's DPI scaling, including
 the track editor and piano keyboard. On Windows, adjust **Settings > System >
-Display > Scale** to change the size of text and controls. Qt 5.14 or newer also
+Display > Scale** to change the size of text and controls. It also
 preserves fractional scale settings such as 125% and 150%.
 
 To run from Windows Explorer without an MSYS2 terminal, create a Windows bundle:
