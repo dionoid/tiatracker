@@ -26,7 +26,7 @@ check:
 configure: check
 	@mkdir -p build/ucrt64
 	cd build/ucrt64 && $(QMAKE) ../../TIATracker.pro -spec win32-g++ \
-		"CONFIG+=release system_sdl" "CONFIG-=debug debug_and_release" "DESTDIR=."
+		"CONFIG+=release" "CONFIG-=debug debug_and_release" "DESTDIR=."
 
 # The application looks for its data relative to the working directory.
 run: all

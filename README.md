@@ -109,5 +109,5 @@ entry point; invoke it with `make`, not `mingw32-make`.
 ### Qt Creator
 
 Open `TIATracker.pro` in Qt Creator and add a `make install` build step, then
-compile it. When using an MSYS2 UCRT64 kit, add `CONFIG+=system_sdl` to the qmake
-arguments to use the installed SDL2 package.
+compile it. SDL2 is resolved through `pkg-config`; ensure your kit uses the
+matching SDL2 development package (UCRT64 for the MSYS2 setup above).

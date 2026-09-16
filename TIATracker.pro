@@ -117,17 +117,9 @@ DISTFILES += \
     data/keymap.cfg \
     data/license.txt
 
-contains(CONFIG, system_sdl) {
-    # Use matching headers and libraries from the active toolchain (e.g. UCRT64).
-    CONFIG += link_pkgconfig
-    PKGCONFIG += sdl2
-} else {
-    win32: LIBS += -L$$PWD/sdl/windows/lib/ -lSDL2
-    linux: LIBS += -lSDL2
-
-    INCLUDEPATH += $$PWD/sdl/windows/include
-    DEPENDPATH += $$PWD/sdl/windows/include
-}
+# Use SDL2 headers and libraries from the active toolchain.
+CONFIG += link_pkgconfig
+PKGCONFIG += sdl2
 
 # Copy files to output directory
 install_it.path = $$OUT_PWD
