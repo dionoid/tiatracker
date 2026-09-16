@@ -483,6 +483,7 @@ void MainWindow::loadTrackByName(const QString &fileName) {
     }
     pTrack->unlock();
     setTrackName(fileName);
+    newTrackState = QJsonObject();
     ui->trackEditor->setEditPos(0);
     updateAllTabs();
 }
@@ -655,13 +656,7 @@ void MainWindow::on_actionSaveAs_triggered() {
 
 void MainWindow::on_actionOpen_triggered() {
     emit stopTrack();
-    // Ask if current track should really be discarded
-    QMessageBox msgBox(QMessageBox::NoIcon,
-                       "Open track",
-                       "Do you really want to discard the current track?",
-                       QMessageBox::Yes | QMessageBox::No, this,
-                       Qt::FramelessWindowHint);
-    if (msgBox.exec() != QMessageBox::Yes) {
+    if (!confirmDiscardTrack("Open track")) {
         return;
     }
 
@@ -801,13 +796,7 @@ void MainWindow::on_pushButtonStop_clicked() {
 
 void MainWindow::on_actionNew_triggered() {
     emit stopTrack();
-    // Ask if current track should really be discarded
-    QMessageBox msgBox(QMessageBox::NoIcon,
-                       "Quit",
-                       "Do you really want to discard the current track?",
-                       QMessageBox::Yes | QMessageBox::No, this,
-                       Qt::FramelessWindowHint);
-    if (msgBox.exec() != QMessageBox::Yes) {
+    if (!confirmDiscardTrack("New track")) {
         return;
     }
     pTrack->lock();
@@ -818,7 +807,32 @@ void MainWindow::on_actionNew_triggered() {
     pTrack->unlock();
     QComboBox *cbGuides = findChild<QComboBox *>("comboBoxPitchGuide");
     cbGuides->setCurrentIndex(0);
+    rememberNewTrack();
     update();
+}
+
+/*************************************************************************/
+
+void MainWindow::rememberNewTrack() {
+    // Capture after UI initialization, which can update track settings.
+    newTrackState = QJsonObject();
+    pTrack->toJson(newTrackState);
+}
+
+/*************************************************************************/
+
+bool MainWindow::confirmDiscardTrack(const QString &title) {
+    QJsonObject currentState;
+    pTrack->toJson(currentState);
+    if (currentState == newTrackState) {
+        return true;
+    }
+
+    QMessageBox msgBox(QMessageBox::NoIcon, title,
+                       "Do you really want to discard the current track?",
+                       QMessageBox::Yes | QMessageBox::No, this,
+                       Qt::FramelessWindowHint);
+    return msgBox.exec() == QMessageBox::Yes;
 }
 
 /*************************************************************************/

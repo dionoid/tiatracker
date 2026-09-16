@@ -70,6 +70,8 @@ public:
 
     void updateAllTabs();
 
+    void rememberNewTrack();
+
     static QJsonObject keymap;
 
 public slots:
@@ -164,6 +166,7 @@ private:
 
     void saveTrackByName(const QString &fileName);
     void loadTrackByName(const QString &fileName);
+    bool confirmDiscardTrack(const QString &title);
 
     void setTrackName(QString name);
 
@@ -186,6 +189,7 @@ private:
 
     Ui::MainWindow *ui = nullptr;
     Track::Track *pTrack = nullptr;
+    QJsonObject newTrackState;
     TiaSound::PitchGuideFactory pgFactory;
     TiaSound::PitchGuide curPitchGuide = pgFactory.getPitchPerfectPalGuide();
 
