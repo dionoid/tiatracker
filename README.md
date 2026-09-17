@@ -100,7 +100,14 @@ Other commands:
 ```sh
 make JOBS=8    # Compile with eight parallel jobs (default: four)
 make clean     # Remove compiled files; keep the copied data and examples
+make test-audio # Check sample scheduling using SDL's silent dummy device
 ```
+
+Playback register changes are scheduled at audio-sample boundaries: 882 samples
+per PAL frame or 735 per NTSC frame at 44,100 Hz. The scheduler keeps two audio
+buffers of lead (about 46 ms with the requested 1,024-sample buffers) to absorb
+ordinary timer jitter. If a longer stall exhausts that lead, the current sound
+continues until scheduling resumes; recovered frames retain their spacing.
 
 Qt's tools still generate the UI, resource and meta-object code from the
 existing `TIATracker.pro` project. The top-level Makefile provides the command-line

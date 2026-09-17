@@ -20,6 +20,7 @@
 #include <sstream>
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 #include <SDL.h>
 
 #include "TIASnd.h"
@@ -32,9 +33,7 @@ SoundSDL2::SoundSDL2(TIASound *tiasound)
   : myTIASound(tiasound),
     myIsEnabled(false),
     myIsInitializedFlag(false),
-    myLastRegisterSetCycle(0),
     myNumChannels(0),
-    myFragmentSizeLogBase2(0),
     myIsMuted(true),
     myVolume(100)
 {
@@ -74,11 +73,6 @@ SoundSDL2::SoundSDL2(TIASound *tiasound)
     return;
   }
 
-  // Pre-compute fragment-related variables as much as possible
-  myFragmentSizeLogBase2 = log(myHardwareSpec.samples) / log(2.0);
-  myFragmentSizeLogDiv1 = myFragmentSizeLogBase2 / 60.0;
-  myFragmentSizeLogDiv2 = (myFragmentSizeLogBase2 - 1) / 60.0;
-
   myIsInitializedFlag = true;
   SDL_PauseAudio(1);
 }
@@ -102,8 +96,8 @@ void SoundSDL2::setEnabled(bool)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void SoundSDL2::open()
 {
-  myIsEnabled = false;
   mute(true);
+  myIsEnabled = false;
   if(!myIsInitializedFlag)
   {
     return;
@@ -128,9 +122,11 @@ void SoundSDL2::close()
 {
   if(myIsInitializedFlag)
   {
-    myIsEnabled = false;
     SDL_PauseAudio(1);
-    myLastRegisterSetCycle = 0;
+    myIsEnabled = false;
+    myRenderedSamples = 0;
+    myNextFrameSample = 0.0;
+    myScheduleStarted = false;
     myTIASound->reset();
     myRegWriteQueue.clear();
   }
@@ -152,7 +148,9 @@ void SoundSDL2::reset()
   if(myIsInitializedFlag)
   {
     SDL_PauseAudio(1);
-    myLastRegisterSetCycle = 0;
+    myRenderedSamples = 0;
+    myNextFrameSample = 0.0;
+    myScheduleStarted = false;
     myTIASound->reset();
     myRegWriteQueue.clear();
     mute(myIsMuted);
@@ -190,12 +188,6 @@ void SoundSDL2::adjustVolume(Int8 direction)
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void SoundSDL2::adjustCycleCounter(Int32 amount)
-{
-  myLastRegisterSetCycle += amount;
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void SoundSDL2::setChannels(uInt32 channels)
 {
   if(channels == 1 || channels == 2)
@@ -205,115 +197,65 @@ void SoundSDL2::setChannels(uInt32 channels)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void SoundSDL2::setFrameRate(float framerate)
 {
-  // Recalculate since frame rate has changed
-  // FIXME - should we clear out the queue or adjust the values in it?
-  myFragmentSizeLogDiv1 = myFragmentSizeLogBase2 / framerate;
-  myFragmentSizeLogDiv2 = (myFragmentSizeLogBase2 - 1) / framerate;
+  assert(framerate > 0);
+  myFrameRate = framerate;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void SoundSDL2::set(uInt16 addr, uInt8 value, Int32 cycle)
+void SoundSDL2::set(uInt16 addr, uInt8 value)
 {
+  assert(addr >= AUDC0 && addr <= AUDV1);
+  myRegisters[addr - AUDC0] = value;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void SoundSDL2::endFrame()
+{
+  if(!myIsInitializedFlag)
+    return;
+
   SDL_LockAudio();
+  // Keep two callback buffers of lead to absorb normal scheduler jitter.
+  // After an underrun, restart in the future instead of collapsing late
+  // frames onto the same sample. Subsequent catch-up frames retain spacing.
+  if(!myScheduleStarted || myNextFrameSample < myRenderedSamples)
+  {
+    myNextFrameSample = myRenderedSamples + 2 * myHardwareSpec.samples;
+    myScheduleStarted = true;
+  }
 
-  // First, calculate how many seconds would have past since the last
-  // register write on a real 2600
-  double delta = double(cycle - myLastRegisterSetCycle) / 1193191.66666667;
-
-  // Now, adjust the time based on the frame rate the user has selected. For
-  // the sound to "scale" correctly, we have to know the games real frame 
-  // rate (e.g., 50 or 60) and the currently emulated frame rate. We use these
-  // values to "scale" the time before the register change occurs.
-  RegWrite info;
-  info.addr = addr;
-  info.value = value;
-  info.delta = delta;
-  myRegWriteQueue.enqueue(info);
-
-  // Update last cycle counter to the current cycle
-  myLastRegisterSetCycle = cycle;
-
+  const uInt64 sample = static_cast<uInt64>(std::llround(myNextFrameSample));
+  for(uInt16 addr = AUDC0; addr <= AUDV1; ++addr)
+    myRegWriteQueue.enqueue({addr, myRegisters[addr - AUDC0], sample});
+  myNextFrameSample += myHardwareSpec.freq / myFrameRate;
   SDL_UnlockAudio();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void SoundSDL2::processFragment(Int16* stream, uInt32 length)
 {
-  uInt32 channels = myHardwareSpec.channels;
-  length = length / channels;
-
-  // If there are excessive items on the queue then we'll remove some
-  if(myRegWriteQueue.duration() > myFragmentSizeLogDiv1)
+  const uInt32 channels = myHardwareSpec.channels;
+  uInt32 remaining = length / channels;
+  while(remaining > 0)
   {
-    double removed = 0.0;
-    while(removed < myFragmentSizeLogDiv2)
+    // Apply all writes at this boundary before generating its first sample.
+    while(myRegWriteQueue.size() &&
+          myRegWriteQueue.front().sample <= myRenderedSamples)
     {
-      RegWrite& info = myRegWriteQueue.front();
-      removed += info.delta;
+      const RegWrite& info = myRegWriteQueue.front();
       myTIASound->set(info.addr, info.value);
       myRegWriteQueue.dequeue();
     }
-  }
 
-  double position = 0.0;
-  double remaining = length;
-
-  while(remaining > 0.0)
-  {
-    if(myRegWriteQueue.size() == 0)
-    {
-      // There are no more pending TIA sound register updates so we'll
-      // use the current settings to finish filling the sound fragment
-      myTIASound->process(stream + (uInt32(position) * channels),
-          length - uInt32(position));
-
-      // Since we had to fill the fragment we'll reset the cycle counter
-      // to zero.  NOTE: This isn't 100% correct, however, it'll do for
-      // now.  We should really remember the overrun and remove it from
-      // the delta of the next write.
-      myLastRegisterSetCycle = 0;
-      break;
-    }
-    else
-    {
-      // There are pending TIA sound register updates so we need to
-      // update the sound buffer to the point of the next register update
-      RegWrite& info = myRegWriteQueue.front();
-
-      // How long will the remaining samples in the fragment take to play
-      double duration = remaining / myHardwareSpec.freq;
-
-      // Does the register update occur before the end of the fragment?
-      if(info.delta <= duration)
-      {
-        // If the register update time hasn't already passed then
-        // process samples upto the point where it should occur
-        if(info.delta > 0.0)
-        {
-          // Process the fragment upto the next TIA register write.  We
-          // round the count passed to process up if needed.
-          double samples = (myHardwareSpec.freq * info.delta);
-          myTIASound->process(stream + (uInt32(position) * channels),
-              uInt32(samples) + uInt32(position + samples) - 
-              (uInt32(position) + uInt32(samples)));
-
-          position += samples;
-          remaining -= samples;
-        }
-        myTIASound->set(info.addr, info.value);
-        myRegWriteQueue.dequeue();
-      }
-      else
-      {
-        // The next register update occurs in the next fragment so finish
-        // this fragment with the current TIA settings and reduce the register
-        // update delay by the corresponding amount of time
-        myTIASound->process(stream + (uInt32(position) * channels),
-            length - uInt32(position));
-        info.delta -= duration;
-        break;
-      }
-    }
+    uInt32 count = remaining;
+    if(myRegWriteQueue.size())
+      count = static_cast<uInt32>(std::min<uInt64>(
+          remaining, myRegWriteQueue.front().sample - myRenderedSamples));
+    myTIASound->process(stream, count);
+    stream += count * channels;
+    remaining -= count;
+    // The audio timeline keeps advancing even when the producer is late.
+    myRenderedSamples += count;
   }
 }
 
@@ -361,17 +303,6 @@ void SoundSDL2::RegWriteQueue::dequeue()
     myHead = (myHead + 1) % myCapacity;
     --mySize;
   }
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-double SoundSDL2::RegWriteQueue::duration() const
-{
-  double duration = 0.0;
-  for(uInt32 i = 0; i < mySize; ++i)
-  {
-    duration += myBuffer[(myHead + i) % myCapacity].delta;
-  }
-  return duration;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

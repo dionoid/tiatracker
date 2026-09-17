@@ -59,14 +59,6 @@ class SoundSDL2
     void setEnabled(bool);
 
     /**
-      The system cycle counter is being adjusting by the specified amount. Any
-      members using the system cycle counter should be adjusted as needed.
-
-      @param amount  The amount the cycle counter is being adjusted by
-    */
-    void adjustCycleCounter(Int32 amount);
-
-    /**
       Sets the number of channels (mono or stereo sound).  Note that this
       determines how the emulation should 'mix' the channels of the TIA sound
       system (of which there are always two).  It does not specify the actual
@@ -110,13 +102,16 @@ class SoundSDL2
     void reset();
 
     /**
-      Sets the sound register to a given value.
+      Stages a register value for the next playback frame.
+      Call these methods only from the player thread.
 
       @param addr   The register address
       @param value  The value to save into the register
-      @param cycle  The system cycle at which the register is being updated
     */
-    void set(uInt16 addr, uInt8 value, Int32 cycle);
+    void set(uInt16 addr, uInt8 value);
+
+    // Publish both channels together and advance by one PAL/NTSC interval.
+    void endFrame();
 
     /**
       Sets the volume of the sound device to the specified level.  The
@@ -160,7 +155,7 @@ class SoundSDL2
     {
       uInt16 addr;
       uInt8 value;
-      double delta;
+      uInt64 sample;
     };
 
     /**
@@ -189,11 +184,6 @@ class SoundSDL2
           Dequeue the first object in the queue.
         */
         void dequeue();
-
-        /**
-          Return the duration of all the items in the queue.
-        */
-        double duration() const;
 
         /**
           Enqueue the specified object.
@@ -243,20 +233,16 @@ class SoundSDL2
     // Indicates if the sound device was successfully initialized
     bool myIsInitializedFlag;
 
-    // Indicates the cycle when a sound register was last set
-    Int32 myLastRegisterSetCycle;
+    // Register staging belongs to the player thread. Queue and sample clocks
+    // are shared with the callback and protected by SDL's audio lock.
+    uInt8 myRegisters[6]{};
+    uInt64 myRenderedSamples = 0;
+    double myNextFrameSample = 0.0;
+    double myFrameRate = 50.0;
+    bool myScheduleStarted = false;
 
     // Indicates the number of channels (mono or stereo)
     uInt32 myNumChannels;
-
-    // Log base 2 of the selected fragment size
-    double myFragmentSizeLogBase2;
-
-    // The myFragmentSizeLogBase2 variable is used in only two places,
-    // both of which involve an expensive division in the sound
-    // processing callback
-    // These are pre-computed to speed up the callback as much as possible
-    double myFragmentSizeLogDiv1, myFragmentSizeLogDiv2;
 
     // Indicates if the sound is currently muted
     bool myIsMuted;
@@ -265,7 +251,7 @@ class SoundSDL2
     uInt32 myVolume;
 
     // Audio specification structure
-    SDL_AudioSpec myHardwareSpec;
+    SDL_AudioSpec myHardwareSpec{};
 
     // Queue of TIA register writes
     RegWriteQueue myRegWriteQueue;

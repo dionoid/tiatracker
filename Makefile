@@ -8,7 +8,7 @@ QMAKE ?= $(shell command -v qmake-qt5 >/dev/null 2>&1 && echo qmake-qt5 || echo 
 BUILD_MAKE ?= mingw32-make
 JOBS ?= 4
 
-.PHONY: all check configure run deploy clean
+.PHONY: all check configure run deploy clean test-audio
 
 all: configure
 	$(BUILD_MAKE) -C build/ucrt64 -j$(JOBS)
@@ -27,6 +27,13 @@ configure: check
 	@mkdir -p build/ucrt64
 	cd build/ucrt64 && $(QMAKE) ../../TIATracker.pro -spec win32-g++ \
 		"CONFIG+=release" "CONFIG-=debug debug_and_release" "DESTDIR=."
+
+test-audio: check
+	@mkdir -p build/tests
+	$(CXX) -std=c++11 -O2 -Wall -Wextra -I. $$(pkg-config --cflags sdl2) \
+		tests/audio-scheduling.cpp emulation/SoundSDL2.cpp emulation/TIASnd.cpp \
+		-o build/tests/audio-scheduling.exe $$(pkg-config --libs sdl2) -mconsole
+	./build/tests/audio-scheduling.exe
 
 # The application looks for its data relative to the working directory.
 run: all

@@ -31,9 +31,9 @@ Player::Player(Track::Track *parentTrack, QObject *parent) : QObject(parent)
     sdlSound.setEnabled(true);
     sdlSound.setVolume(100);
 
-    sdlSound.set(AUDC0, 0, 10);
-    sdlSound.set(AUDV0, 0, 15);
-    sdlSound.set(AUDF0, 0, 18);
+    sdlSound.set(AUDC0, 0);
+    sdlSound.set(AUDV0, 0);
+    sdlSound.set(AUDF0, 0);
 }
 
 Player::~Player()
@@ -72,7 +72,7 @@ void Player::startTimer() {
         while (doReplay && timestamp < lastReplayTime + frameDuration) {
             QCoreApplication::processEvents(QEventLoop::AllEvents, 5);
             if (!doReplay) {
-                break;
+                return;
             }
             timestamp = elapsedTimer.nsecsElapsed() / 1000000.0;
             if (timestamp < lastReplayTime + frameDuration) {
@@ -152,9 +152,9 @@ void Player::stopTrack() {
 /*************************************************************************/
 
 void Player::setChannel0(int distortion, int frequency, int volume) {
-    sdlSound.set(AUDC0, distortion, 10);
-    sdlSound.set(AUDV0, volume, 15);
-    sdlSound.set(AUDF0, frequency, 18);
+    sdlSound.set(AUDC0, distortion);
+    sdlSound.set(AUDV0, volume);
+    sdlSound.set(AUDF0, frequency);
 }
 
 /*************************************************************************/
@@ -163,9 +163,9 @@ void Player::setChannel(int channel, int distortion, int frequency, int volume) 
     int audC = channel == 0 ? AUDC0 : AUDC1;
     int audV = channel == 0 ? AUDV0 : AUDV1;
     int audF = channel == 0 ? AUDF0 : AUDF1;
-    sdlSound.set(audC, distortion, 10);
-    sdlSound.set(audV, volume, 15);
-    sdlSound.set(audF, frequency, 18);
+    sdlSound.set(audC, distortion);
+    sdlSound.set(audV, volume);
+    sdlSound.set(audF, frequency);
 }
 
 /*************************************************************************/
@@ -495,6 +495,7 @@ void Player::timerFired() {
         updateSilence();
     }
     pTrack->unlock();
+    sdlSound.endFrame();
 }
 
 }
