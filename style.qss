@@ -146,6 +146,10 @@ QWidget#widgetInfoTable > QLabel {
     background-color: #eee8d5;
 }
 
+QWidget#widgetInfoTable > QFrame[frameShape="4"] {
+    color: #657b83;
+}
+
 
 QGroupBox {
     border: 1px solid #002b36;
