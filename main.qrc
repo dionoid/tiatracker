@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>style.qss</file>
+        <file>graphics/tt_icon.png</file>
         <file>graphics/arrow_down.png</file>
         <file>graphics/spin_up.png</file>
         <file>graphics/spin_down.png</file>

@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include <QApplication>
+#include <QIcon>
 #include <QFile>
 #include <QString>
 #include <QComboBox>
@@ -47,6 +48,11 @@ int main(int argc, char *argv[])
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
                 Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QApplication a(argc, argv);
+
+#ifdef Q_OS_MACOS
+    // Set the running app's Dock icon explicitly, including direct executable launches.
+    a.setWindowIcon(QIcon(":/graphics/tt_icon.png"));
+#endif
 
     // Load and set stylesheet
     QFile styleFile(":/style.qss");

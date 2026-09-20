@@ -33,7 +33,21 @@
 #include <QCloseEvent>
 #include <QSaveFile>
 #include <QSettings>
+#include <QCoreApplication>
 
+namespace {
+QString applicationDataPath(const QString &relativePath) {
+#ifdef Q_OS_MACOS
+    // Both macOS layouts keep editable data beside TIATracker.app, not inside
+    // its signed bundle. Finder does not set the working directory here.
+    const QDir dataDirectory(QCoreApplication::applicationDirPath() + "/../../..");
+    if (QFileInfo(dataDirectory.filePath("keymap.cfg")).isFile()) {
+        return dataDirectory.absoluteFilePath(relativePath);
+    }
+#endif
+    return QDir::current().absoluteFilePath(relativePath);
+}
+}
 
 const QColor MainWindow::dark{"#002b36"};
 const QColor MainWindow::darkHighlighted{"#073642"};
@@ -57,6 +71,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#ifdef Q_OS_MACOS
+    // Native checkbox layout insets exclude part of our stylesheet's box,
+    // letting adjacent controls overlap its text. Reserve the full widget.
+    ui->checkBoxGlobalTempo->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->checkBoxFollow->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->checkBoxLoop->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+#endif
+
     // Read in settings
     QSettings settings("Kylearan", "TIATracker");
     restoreGeometry(settings.value("geometry").toByteArray());
@@ -64,22 +86,22 @@ MainWindow::MainWindow(QWidget *parent) :
     if (settings.contains("songsPath")) {
         curSongsDialogPath = settings.value("songsPath").toString();
     } else {
-        curSongsDialogPath = QDir::currentPath() + "/songs";
+        curSongsDialogPath = applicationDataPath("songs");
     }
     if (settings.contains("instrumentsPath")) {
         ui->tabInstruments->curInstrumentsDialogPath = settings.value("instrumentsPath").toString();
     } else {
-        ui->tabInstruments->curInstrumentsDialogPath = QDir::currentPath() + "/instruments";
+        ui->tabInstruments->curInstrumentsDialogPath = applicationDataPath("instruments");
     }
     if (settings.contains("percussionPath")) {
         ui->tabPercussion->curPercussionDialogPath = settings.value("percussionPath").toString();
     } else {
-        ui->tabPercussion->curPercussionDialogPath = QDir::currentPath() + "/instruments";
+        ui->tabPercussion->curPercussionDialogPath = applicationDataPath("instruments");
     }
     if (settings.contains("guidesPath")) {
         ui->tabOptions->curGuidesDialogPath = settings.value("guidesPath").toString();
     } else {
-        ui->tabOptions->curGuidesDialogPath = QDir::currentPath() + "/guides";
+        ui->tabOptions->curGuidesDialogPath = applicationDataPath("guides");
     }
 
     // Context menu for envelope widgets
@@ -103,7 +125,7 @@ MainWindow::~MainWindow() {
 QJsonObject MainWindow::keymap;
 
 void MainWindow::loadKeymap() {
-    QFile keymapFile("keymap.cfg");
+    QFile keymapFile(applicationDataPath("keymap.cfg"));
     if (!keymapFile.open(QIODevice::ReadOnly)) {
         std::cout << "Unable to open keyboard shortcuts file keymap.cfg!\n";
     } else {
@@ -840,7 +862,7 @@ bool MainWindow::confirmDiscardTrack(const QString &title) {
 /*************************************************************************/
 
 QString MainWindow::readAsm(QString fileName) {
-    QFile fileIn(fileName);
+    QFile fileIn(applicationDataPath(fileName));
     if (!fileIn.open(QIODevice::ReadOnly)) {
         MainWindow::displayMessage("Unable to open file " + fileName + "!");
         return "";
@@ -1906,7 +1928,7 @@ void MainWindow::on_actionAbout_triggered() {
 /*************************************************************************/
 
 void MainWindow::on_actionRead_the_manual_triggered() {
-    QDesktopServices::openUrl(QUrl("TIATracker_manual.pdf", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(applicationDataPath("TIATracker_manual.pdf")));
 }
 
 /*************************************************************************/

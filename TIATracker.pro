@@ -155,4 +155,5 @@ INSTALLS += \
     install_guides
 
 
-RC_ICONS = graphics/tt_icon.ico
+win32: RC_ICONS = graphics/tt_icon.ico
+macx: ICON = graphics/tt_icon.icns

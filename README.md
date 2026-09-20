@@ -39,6 +39,23 @@ For feedback, bug reports and feature requests, send a mail to andre.wichmann@gm
 
 TIATracker requires Qt 5.15, SDL2 and a C++ compiler. Qt Creator is optional.
 
+### Linux: Qt 5
+
+Install a C++ compiler, Make, Qt 5.15 development libraries and tools (Core,
+GUI, Widgets and qmake), SDL2 development libraries, and pkg-config using your
+distribution's package manager.
+
+Run `make` to build, `make run` to launch, or `make test-audio` to run the audio
+scheduling tests. The Makefile uses `qmake-qt5` when available, otherwise
+`qmake`; use `make QMAKE=/path/to/qt5/bin/qmake` to select a specific Qt 5
+installation. Qt 6 is not supported.
+
+The executable and copied application data are placed in `build/linux/`.
+`make run` launches `build/linux/TIATracker` from that directory so it can
+find its data. Qt and SDL2 must remain installed on the machine. `make clean`
+and `make JOBS=8` are supported; Linux distribution packaging via `make deploy`
+is not implemented.
+
 ### Windows: MSYS2 UCRT64
 
 You can build a native 64-bit Windows version of TIATracker using MSYS2.
@@ -112,6 +129,114 @@ continues until scheduling resumes; recovered frames retain their spacing.
 Qt's tools still generate the UI, resource and meta-object code from the
 existing `TIATracker.pro` project. The top-level Makefile provides the command-line
 entry point; invoke it with `make`, not `mingw32-make`.
+
+### macOS: Qt 5
+
+Required libraries and build tools:
+
+- **Qt 5.15** (`qt@5`): Qt Core, GUI and Widgets, plus the `qmake`, `moc`,
+  `uic` and `rcc` build tools. Qt 6 is not supported by this build yet.
+- **SDL2 development headers and libraries** (`sdl2`): audio output and the
+  audio scheduling tests. See the compatibility-layer note below.
+- **pkg-config** (`pkgconf`): lets qmake and the tests locate SDL2.
+- **Apple Command Line Tools**: Clang, Make and the macOS SDK. A full Xcode
+  installation is not required for this application build.
+
+Homebrew installs the libraries' transitive dependencies automatically.
+Qt Creator is optional.
+
+Install Apple's Command Line Tools if they are not already installed:
+
+```sh
+xcode-select --install
+```
+
+With [Homebrew](https://brew.sh/) installed, install the dependencies:
+
+```sh
+brew install qt@5 sdl2 pkgconf
+```
+
+Qt 5 is deprecated in Homebrew but is retained here for the initial macOS port;
+Qt 6 migration is a separate task. Homebrew currently schedules `qt@5` to be
+disabled on May 19, 2027. Its `sdl2` formula now resolves to `sdl2-compat`, an
+SDL2 API implementation backed by SDL3. An existing native SDL2 installation
+also works, provided `pkg-config --exists sdl2` succeeds.
+
+Use libraries built for the same architecture as the compiler (Apple Silicon
+or Intel); do not mix native ARM64 dependencies with a Rosetta toolchain.
+
+From the repository directory:
+
+```sh
+make
+make run
+make test-audio
+```
+
+The Makefile automatically selects Homebrew's keg-only Qt 5 `qmake` using
+`brew --prefix qt@5`, uses Apple Clang and Make, and builds into `build/macos/`.
+No global Qt PATH changes are needed. For a Qt 5 installation outside Homebrew,
+pass its absolute qmake path, for example `make QMAKE=/path/to/qt5/bin/qmake`;
+use the same override for `make run` and `make test-audio`.
+
+**For development, launch using `make run`.** This starts the executable inside
+`build/macos/TIATracker.app` with `build/macos/` as its working directory, where
+the build copies the keyboard map, player templates and examples. The bundle
+is a development build: it depends on installed Qt/SDL libraries. Use the ZIP
+deployment below when copying to another machine.
+
+`make JOBS=8` and `make clean` work on macOS too. Build commands refresh the
+copied data and examples, so keep your own songs outside the build directory.
+
+#### macOS ZIP distribution
+
+To create a ZIP containing a Finder-launchable app and its external data files:
+
+```sh
+make deploy
+```
+
+The output is `build/macos-deploy/TIATracker-macos.zip`. Extract it and open
+`TIATracker/TIATracker.app` from Finder. The archive contains:
+
+```text
+TIATracker/
+  TIATracker.app
+  keymap.cfg
+  license.txt
+  TIATracker_manual.pdf
+  player/
+  instruments/
+  songs/
+  guides/
+```
+
+An unpacked copy is also available in `build/macos-deploy/TIATracker/`.
+**Keep the whole folder together**, rather than moving only the app to Applications.
+Qt frameworks and plugins, SDL2 and their non-system library dependencies are
+still inside the app, bundled using `macdeployqt` from the selected Qt 5 installation. When using
+`sdl2-compat`, its SDL3 dependency is included too. Homebrew, Qt and SDL do not
+need to be installed on the destination machine.
+
+The keyboard map, manual, player export templates and examples are outside the
+app, located relative to its containing folder rather than the working directory.
+You can edit the external keymap or save songs, guides and instruments without
+changing the app's code signature. Restart the app after changing the keymap.
+Existing saved dialog locations are preserved. Deploying again replaces the
+generated folder and ZIP, so keep your own work outside the build directory.
+
+Deployment uses a fresh staging directory and verifies library dependencies and
+code signatures and creates the ZIP before replacing the previous output. The development
+bundle is left unchanged. The output targets the build machine's architecture,
+not a universal Intel/Apple Silicon binary. The destination macOS version must
+also be supported by the bundled Qt/SDL libraries; the app's compiler deployment
+target alone does not guarantee compatibility with older macOS releases.
+
+The app is **ad-hoc signed** for local use, not Developer ID signed or notarized.
+Gatekeeper may block copies downloaded on another Mac. Public distribution
+requires a separate Developer ID signing and notarization workflow; `make deploy`
+does not perform those steps or create a disk image.
 
 ### Qt Creator
 

@@ -1,4 +1,4 @@
-// Run with `make test-audio` in the MSYS2 UCRT64 terminal.
+// Run with `make test-audio`s
 // SDL's dummy device stays paused; tests drive the real renderer themselves.
 #include "emulation/SoundSDL2.h"
 #include <algorithm>
