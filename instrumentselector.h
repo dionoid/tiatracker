@@ -30,7 +30,7 @@ public:
     int getSelectedInstrument();
     void setSelectedInstrument(int index);
 
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
 signals:
     void setWaveform(TiaSound::Distortion dist);

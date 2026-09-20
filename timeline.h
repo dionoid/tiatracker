@@ -23,7 +23,7 @@ public:
     void registerTrack(Track::Track *newTrack);
     void registerPatternMenu(QMenu *newPatternMenu);
 
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
 signals:
     void changeEditPos(int newPos);

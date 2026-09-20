@@ -1,5 +1,5 @@
 #!/bin/bash
-# Package an ad-hoc-signed Qt 5 app and its sibling data files in a ZIP.
+# Package an ad-hoc-signed Qt 6 app and its sibling data files in a ZIP.
 # Compatible with the Bash 3.2 shipped with macOS.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -32,17 +32,6 @@ cp -R player instruments songs guides "$package/"
 # macdeployqt follows third-party dependencies too (SDL2, and SDL3 when using
 # sdl2-compat), rewrites install names and supplies the Cocoa platform plugin.
 # ARM64 requires valid signatures on modified code.
-# Qt 5 scans WebP after relocating it, so its @loader_path/../lib rpath no
-# longer points at Homebrew. -libpath does not apply to @rpath resolution.
-# Stage this sibling first so the bundle's own Frameworks rpath resolves it.
-if command -v brew >/dev/null 2>&1; then
-    sharpyuv="$(brew --prefix)/lib/libsharpyuv.0.dylib"
-    qt_plugins=$("$qmake" -query QT_INSTALL_PLUGINS)
-    if [[ -f "$qt_plugins/imageformats/libqwebp.dylib" && -f "$sharpyuv" ]]; then
-        mkdir -p "$app/Contents/Frameworks"
-        cp -L "$sharpyuv" "$app/Contents/Frameworks/"
-    fi
-fi
 "$macdeployqt" "$app" -always-overwrite -codesign=-
 
 # Some macdeployqt errors do not cause a nonzero exit status. Reject incomplete

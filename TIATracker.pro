@@ -4,13 +4,11 @@
 #
 #-------------------------------------------------
 
-!equals(QT_MAJOR_VERSION, 5)|lessThan(QT_MINOR_VERSION, 15) {
-    error("TIATracker requires Qt 5.15 or newer within Qt 5.")
+!equals(QT_MAJOR_VERSION, 6) {
+    error("TIATracker requires Qt 6.")
 }
 
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui widgets
 
 TARGET = TIATracker
 TEMPLATE = app
@@ -101,7 +99,13 @@ FORMS    += mainwindow.ui \
     aboutdialog.ui \
     createguidedialog.ui
 
-CONFIG += c++11
+CONFIG += c++17
+
+# The supported Homebrew SDL2 build requires macOS 15 or newer.
+# Do not advertise compatibility below that of the linked libraries.
+macx:lessThan(QMAKE_MACOSX_DEPLOYMENT_TARGET, 15.0) {
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 15.0
+}
 
 CONFIG(release, debug|release) {
     CONFIG += optimize_full

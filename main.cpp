@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include <QApplication>
+#include <QDebug>
 #include <QIcon>
 #include <QFile>
 #include <QString>
@@ -41,10 +42,7 @@
 #undef main
 int main(int argc, char *argv[])
 {
-    // Scale custom-painted widgets and their mouse coordinates along with the
-    // standard controls. These attributes must be set before QApplication.
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    // Qt 6 always enables high-DPI scaling; preserve fractional scale factors.
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
                 Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QApplication a(argc, argv);
@@ -56,8 +54,11 @@ int main(int argc, char *argv[])
 
     // Load and set stylesheet
     QFile styleFile(":/style.qss");
-    styleFile.open(QFile::ReadOnly);
-    a.setStyleSheet(styleFile.readAll());
+    if (styleFile.open(QFile::ReadOnly)) {
+        a.setStyleSheet(styleFile.readAll());
+    } else {
+        qWarning() << "Unable to load application stylesheet:" << styleFile.errorString();
+    }
 
     // Track
     Track::Track myTrack{};

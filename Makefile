@@ -6,8 +6,8 @@ SHELL := /bin/sh
 HOST_OS := $(shell uname -s)
 WINDOWS_HOST := $(filter MINGW% MSYS% CYGWIN%,$(HOST_OS))
 ifeq ($(HOST_OS),Darwin)
-# Homebrew's Qt 5 is keg-only; do not accidentally select Qt 6 from PATH.
-QMAKE ?= $(shell if command -v brew >/dev/null 2>&1; then printf '%s/bin/qmake' "$$(brew --prefix qt@5)"; else echo qmake; fi)
+# Select Homebrew's Qt 6 base tools.
+QMAKE ?= $(shell if command -v brew >/dev/null 2>&1; then printf '%s/bin/qmake' "$$(brew --prefix qtbase)"; else command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake; fi)
 BUILD_MAKE ?= $(MAKE)
 ifeq ($(origin CXX),default)
 CXX := clang++
@@ -18,8 +18,8 @@ APP := TIATracker.app/Contents/MacOS/TIATracker
 EXE_SUFFIX :=
 TEST_LDFLAGS :=
 else ifneq ($(WINDOWS_HOST),)
-# Older MSYS2 Qt 5 packages name the tool qmake instead of qmake-qt5.
-QMAKE ?= $(shell command -v qmake-qt5 >/dev/null 2>&1 && echo qmake-qt5 || echo qmake)
+# MSYS2 installs Qt 6 tools with a versioned suffix.
+QMAKE ?= $(shell command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake)
 BUILD_MAKE ?= mingw32-make
 BUILD_DIR := build/ucrt64
 QMAKE_SPEC := -spec win32-g++
@@ -28,7 +28,7 @@ EXE_SUFFIX := .exe
 TEST_LDFLAGS := -mconsole
 else
 # Use the native Linux toolchain and let qmake select its default platform spec.
-QMAKE ?= $(shell command -v qmake-qt5 >/dev/null 2>&1 && echo qmake-qt5 || echo qmake)
+QMAKE ?= $(shell command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake)
 BUILD_MAKE ?= $(MAKE)
 BUILD_DIR := build/linux
 QMAKE_SPEC :=
@@ -54,7 +54,7 @@ endif
 	@for tool in "$(QMAKE)" "$(BUILD_MAKE)" "$(CXX)" pkg-config; do \
 		command -v "$$tool" >/dev/null || { echo "Missing $$tool; see README.md for dependencies."; exit 1; }; \
 	done
-	@"$(QMAKE)" -query QT_VERSION | grep -q '^5\.' || { echo "Qt 5 is required."; exit 1; }
+	@"$(QMAKE)" -query QT_VERSION | grep -q '^6\.' || { echo "Qt 6 is required."; exit 1; }
 	@pkg-config --exists sdl2 || { echo "SDL2 is missing; see README.md for dependencies."; exit 1; }
 
 configure: check
@@ -64,7 +64,7 @@ configure: check
 
 test-audio: check
 	@mkdir -p build/tests
-	$(CXX) -std=c++11 -O2 -Wall -Wextra -I. $$(pkg-config --cflags sdl2) \
+	$(CXX) -std=c++17 -O2 -Wall -Wextra -I. $$(pkg-config --cflags sdl2) \
 		tests/audio-scheduling.cpp emulation/SoundSDL2.cpp emulation/TIASnd.cpp \
 		-o build/tests/audio-scheduling$(EXE_SUFFIX) $$(pkg-config --libs sdl2) $(TEST_LDFLAGS)
 	./build/tests/audio-scheduling$(EXE_SUFFIX)

@@ -158,12 +158,13 @@ void InstrumentSelector::paintEvent(QPaintEvent *) {
 /*************************************************************************/
 
 void InstrumentSelector::mousePressEvent(QMouseEvent *event) {
-    if (event->x() < horizontalMargin || event->x() > width() - horizontalMargin
-            || event->y() < verticalMargin || event->y() > widgetHeight - verticalMargin) {
+    const QPoint position = event->position().toPoint();
+    if (position.x() < horizontalMargin || position.x() > width() - horizontalMargin
+            || position.y() < verticalMargin || position.y() > widgetHeight - verticalMargin) {
         return;
     }
 
-    int buttonY = event->y() - verticalMargin;
+    int buttonY = position.y() - verticalMargin;
     if (buttonY > buttonHeight*Track::Track::numInstruments) {
         buttonY -= insPercMargin;
     }

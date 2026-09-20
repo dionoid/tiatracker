@@ -37,18 +37,22 @@ For feedback, bug reports and feature requests, send a mail to andre.wichmann@gm
 
 ## Compiling from source
 
-TIATracker requires Qt 5.15, SDL2 and a C++ compiler. Qt Creator is optional.
+TIATracker requires Qt 6, SDL2 and a C++17-capable compiler. The build continues
+to use qmake; Qt Creator is optional.
 
-### Linux: Qt 5
+The macOS setup was tested with Homebrew Qt 6.11.2 after installation. The Qt 6
+Windows and Linux instructions below have not been tested on those platforms.
 
-Install a C++ compiler, Make, Qt 5.15 development libraries and tools (Core,
+### Linux: Qt 6
+
+Install a C++17-capable compiler, Make, Qt 6 development libraries and tools (Core,
 GUI, Widgets and qmake), SDL2 development libraries, and pkg-config using your
 distribution's package manager.
 
 Run `make` to build, `make run` to launch, or `make test-audio` to run the audio
-scheduling tests. The Makefile uses `qmake-qt5` when available, otherwise
-`qmake`; use `make QMAKE=/path/to/qt5/bin/qmake` to select a specific Qt 5
-installation. Qt 6 is not supported.
+scheduling tests. The Makefile uses `qmake6` when available, otherwise
+`qmake`; the selected tool must belong to Qt 6. Use
+`make QMAKE=/path/to/qt6/bin/qmake` to select a specific Qt 6 installation.
 
 The executable and copied application data are placed in `build/linux/`.
 `make run` launches `build/linux/TIATracker` from that directory so it can
@@ -71,12 +75,14 @@ Run the commands below in that UCRT64 terminal. First, install the build depende
 ```sh
 pacman -S --needed make mingw-w64-ucrt-x86_64-gcc \
   mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-pkgconf \
-  mingw-w64-ucrt-x86_64-qt5-base mingw-w64-ucrt-x86_64-SDL2
+  mingw-w64-ucrt-x86_64-qt6-base mingw-w64-ucrt-x86_64-SDL2
 ```
 
-These include MSYS2's [Qt 5](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-qt5-base)
+These include MSYS2's [Qt 6](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-qt6-base)
 and [SDL2](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-SDL2)
 packages for UCRT64. Use the UCRT64 packages together so the compiler and libraries match.
+The Qt 6 base package provides `qmake6` and `qmake`, plus `windeployqt6` and
+`windeployqt`, in `/ucrt64/bin/`.
 
 From the repository directory, build and launch with:
 
@@ -85,7 +91,7 @@ make
 make run
 ```
 
-The Makefile runs `qmake-qt5` (or `qmake` on older MSYS2 installations) and
+The Makefile runs `qmake6` (falling back to `qmake`, which must be Qt 6) and
 `mingw32-make`, then copies the required data,
 player sources and examples to `build/ucrt64/`. It uses the installed SDL2
 package. You do not need a separate `make install` step.
@@ -130,12 +136,17 @@ Qt's tools still generate the UI, resource and meta-object code from the
 existing `TIATracker.pro` project. The top-level Makefile provides the command-line
 entry point; invoke it with `make`, not `mingw32-make`.
 
-### macOS: Qt 5
+### macOS: Qt 6
+
+The application targets **macOS 15 or newer**, matching the minimum version of
+the SDL2 library used by the tested Homebrew build. Dependencies may require a
+newer system; lowering the application target alone does not make them compatible.
 
 Required libraries and build tools:
 
-- **Qt 5.15** (`qt@5`): Qt Core, GUI and Widgets, plus the `qmake`, `moc`,
-  `uic` and `rcc` build tools. Qt 6 is not supported by this build yet.
+- **Qt 6** ([Homebrew `qtbase`](https://formulae.brew.sh/formula/qtbase)):
+  Qt Core, GUI and Widgets, plus the `qmake`, `moc`, `uic` and `rcc` build tools
+  and `macdeployqt` for deployment. No separate `qttools` package is needed.
 - **SDL2 development headers and libraries** (`sdl2`): audio output and the
   audio scheduling tests. See the compatibility-layer note below.
 - **pkg-config** (`pkgconf`): lets qmake and the tests locate SDL2.
@@ -154,12 +165,10 @@ xcode-select --install
 With [Homebrew](https://brew.sh/) installed, install the dependencies:
 
 ```sh
-brew install qt@5 sdl2 pkgconf
+brew install qtbase sdl2 pkgconf
 ```
 
-Qt 5 is deprecated in Homebrew but is retained here for the initial macOS port;
-Qt 6 migration is a separate task. Homebrew currently schedules `qt@5` to be
-disabled on May 19, 2027. Its `sdl2` formula now resolves to `sdl2-compat`, an
+Homebrew's `sdl2` formula now resolves to `sdl2-compat`, an
 SDL2 API implementation backed by SDL3. An existing native SDL2 installation
 also works, provided `pkg-config --exists sdl2` succeeds.
 
@@ -174,10 +183,10 @@ make run
 make test-audio
 ```
 
-The Makefile automatically selects Homebrew's keg-only Qt 5 `qmake` using
-`brew --prefix qt@5`, uses Apple Clang and Make, and builds into `build/macos/`.
-No global Qt PATH changes are needed. For a Qt 5 installation outside Homebrew,
-pass its absolute qmake path, for example `make QMAKE=/path/to/qt5/bin/qmake`;
+The Makefile automatically selects Homebrew's Qt 6 `qmake` at
+`$(brew --prefix qtbase)/bin/qmake`, uses Apple Clang and Make, and builds into `build/macos/`.
+No global Qt PATH changes are needed. For a Qt 6 installation outside Homebrew,
+pass its absolute qmake path, for example `make QMAKE=/path/to/qt6/bin/qmake`;
 use the same override for `make run` and `make test-audio`.
 
 **For development, launch using `make run`.** This starts the executable inside
@@ -215,7 +224,7 @@ TIATracker/
 An unpacked copy is also available in `build/macos-deploy/TIATracker/`.
 **Keep the whole folder together**, rather than moving only the app to Applications.
 Qt frameworks and plugins, SDL2 and their non-system library dependencies are
-still inside the app, bundled using `macdeployqt` from the selected Qt 5 installation. When using
+still inside the app, bundled using `macdeployqt` from the selected Qt 6 installation. When using
 `sdl2-compat`, its SDL3 dependency is included too. Homebrew, Qt and SDL do not
 need to be installed on the destination machine.
 
@@ -241,5 +250,6 @@ does not perform those steps or create a disk image.
 ### Qt Creator
 
 Open `TIATracker.pro` in Qt Creator and add a `make install` build step, then
-compile it. SDL2 is resolved through `pkg-config`; ensure your kit uses the
+compile it with a Qt 6 kit and a C++17-capable compiler.
+SDL2 is resolved through `pkg-config`; ensure your kit uses the
 matching SDL2 development package (UCRT64 for the MSYS2 setup above).
