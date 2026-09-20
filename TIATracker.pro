@@ -125,6 +125,13 @@ DISTFILES += \
 CONFIG += link_pkgconfig
 PKGCONFIG += sdl2
 
+# Import flags now so SDL's Windows entry point can be removed after import.
+# Qt owns application startup; SDL is used for audio only.
+load(link_pkgconfig)
+DEFINES -= main=SDL_main
+DEFINES += SDL_MAIN_HANDLED
+LIBS -= -lSDL2main
+
 # Copy files to output directory
 install_it.path = $$OUT_PWD
 install_it.files = $$PWD/data/*

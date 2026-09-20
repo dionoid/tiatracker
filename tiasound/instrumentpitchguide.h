@@ -38,7 +38,7 @@ public:
     int getPercentOff(int frequency);
 
     /* Member variables */
-    Distortion distortion;
+    Distortion distortion = Distortion::SILENT;
     QString name;
 
 protected:

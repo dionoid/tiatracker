@@ -39,9 +39,10 @@
 
 
 #include "SDL.h"
-#undef main
 int main(int argc, char *argv[])
 {
+    SDL_SetMainReady();
+
     // Qt 6 always enables high-DPI scaling; preserve fractional scale factors.
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
                 Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
