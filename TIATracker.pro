@@ -117,6 +117,8 @@ CONFIG(release, debug|release) {
 RESOURCES += \
     main.qrc
 
+win32: include(windows-resources.pri)
+
 DISTFILES += \
     style.qss \
     notes.txt \
@@ -168,6 +170,8 @@ install_guides.files = $$PWD/guides
 
 INSTALLS += \
     install_guides
+
+win32: INSTALLS -= install_it install_player install_instruments install_songs install_guides
 
 
 win32: RC_ICONS = graphics/tt_icon.ico

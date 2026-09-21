@@ -8,6 +8,10 @@
 #include <QProcessEnvironment>
 #include <QTemporaryDir>
 #include <QTextStream>
+#include <QDirIterator>
+#include <QStandardPaths>
+#include <QSet>
+#include <QXmlStreamReader>
 #include <cstdlib>
 
 static void check(bool condition, const QString &message) {
@@ -36,6 +40,8 @@ static void runStartup(const QString &executable, const QString &home, bool succ
     auto environment = QProcessEnvironment::systemEnvironment();
     environment.insert("HOME", home);
     environment.insert("CFFIXED_USER_HOME", home);
+    // Ignore the real user's configured XDG Documents location in Linux probes.
+    environment.insert("XDG_CONFIG_HOME", home + "/.config");
     environment.insert("TIATRACKER_DATA_DIR", home + "/obsolete data");
     child.setProcessEnvironment(environment);
     child.setWorkingDirectory("/");
@@ -71,6 +77,50 @@ int main(int argc, char **argv) {
     check(temporary.isValid(), "temporary directory");
     const QString source = temporary.path() + "/bundled defaults";
     const QString destination = temporary.path() + "/personal data";
+    check(ApplicationData::path() == QDir(QStandardPaths::writableLocation(
+              QStandardPaths::DocumentsLocation) + "/TIATracker").absolutePath(),
+          "configured Documents resource path");
+#ifdef Q_OS_WIN
+    // Duplicate aliases are hidden by runtime lookup; inspect the generated QRC.
+    for (const QString name : {"defaults", "examples"}) {
+        QXmlStreamReader manifest(readFile(QCoreApplication::applicationDirPath()
+                                           + "/qmake_" + name + ".qrc"));
+        QSet<QString> aliases;
+        while (!manifest.atEnd()) {
+            manifest.readNext();
+            if (manifest.isStartElement() && manifest.name() == QStringLiteral("file")) {
+                const QString alias = manifest.attributes().value("alias").toString();
+                check(!aliases.contains(alias), "duplicate embedded alias: " + alias);
+                aliases.insert(alias);
+            }
+        }
+        check(!manifest.hasError() && !aliases.isEmpty(), "valid resource manifest: " + name);
+    }
+    const QString extracted = temporary.path() + "/embedded defaults";
+    QString embeddedError;
+    check(ApplicationData::copyMissingFiles(":/defaults", extracted, embeddedError), embeddedError);
+    for (const QString required : {"keymap.cfg", "TIATracker_manual.pdf", "license.txt",
+                                    "songs", "instruments", "guides", "player/dasm",
+                                    "player/k65", "player/mads"}) {
+        check(QFileInfo::exists(extracted + '/' + required), "embedded default: " + required);
+    }
+    QDirIterator embedded(":/defaults", QDir::Files, QDirIterator::Subdirectories);
+    int embeddedCount = 0;
+    while (embedded.hasNext()) {
+        const QString resource = embedded.next();
+        const QString copy = extracted + resource.mid(QString(":/defaults").size());
+        check(readFile(copy) == readFile(resource), "embedded bytes: " + resource);
+        check(QFileInfo(copy).isWritable(), "editable embedded copy");
+        ++embeddedCount;
+    }
+    check(embeddedCount > 100, "embedded resource tree is populated");
+    writeFile(extracted + "/keymap.cfg", "personal shortcuts");
+    check(QFile::remove(extracted + "/TIATracker_manual.pdf"), "remove embedded manual copy");
+    check(ApplicationData::copyMissingFiles(":/defaults", extracted, embeddedError), embeddedError);
+    check(readFile(extracted + "/keymap.cfg") == "personal shortcuts", "preserve embedded edits");
+    check(readFile(extracted + "/TIATracker_manual.pdf") == readFile(":/defaults/TIATracker_manual.pdf"),
+          "restore embedded manual");
+#endif
     const QStringList files = {"keymap.cfg", "license.txt", "TIATracker_manual.pdf",
                                "songs/A song.ttt", "instruments/Bass.tti", "guides/PAL guide.ttg",
                                "player/dasm/test.asm", "player/k65/test.k65", "player/mads/test.asm"};

@@ -4,15 +4,13 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QStandardPaths>
 
 namespace ApplicationData {
 
 QString path(const QString &relativePath) {
-#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
-    return QDir(QDir::home().filePath("Documents/TIATracker")).absoluteFilePath(relativePath);
-#else
-    return QDir::current().absoluteFilePath(relativePath);
-#endif
+    return QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+                + "/TIATracker").absoluteFilePath(relativePath);
 }
 
 bool copyMissingFiles(const QString &source, const QString &destination, QString &error) {
@@ -64,9 +62,10 @@ bool copyMissingFiles(const QString &source, const QString &destination, QString
 
 bool initialize(QString &error) {
     error.clear();
-#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
     const QDir executableDirectory(QCoreApplication::applicationDirPath());
-#ifdef Q_OS_MACOS
+#ifdef Q_OS_WIN
+    const QString bundledData = ":/defaults";
+#elif defined(Q_OS_MACOS)
     const QString bundledData = executableDirectory.absoluteFilePath("../Resources/data");
 #else
     // Development builds use data/; Debian packages use /usr/share/tiatracker.
@@ -80,9 +79,6 @@ bool initialize(QString &error) {
         return false;
     }
     return copyMissingFiles(bundledData, path(), error);
-#else
-    return true;
-#endif
 }
 
 }

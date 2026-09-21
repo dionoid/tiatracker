@@ -4,7 +4,6 @@ SHELL := /bin/sh
 .DEFAULT_GOAL := all
 
 HOST_OS := $(shell uname -s)
-WINDOWS_HOST := $(filter MINGW% MSYS% CYGWIN%,$(HOST_OS))
 DEPENDENCY_HINT := See README.md for dependencies.
 ifeq ($(HOST_OS),Darwin)
 # Select Homebrew's Qt 6 base tools.
@@ -18,16 +17,7 @@ QMAKE_SPEC :=
 APP := TIATracker.app/Contents/MacOS/TIATracker
 EXE_SUFFIX :=
 TEST_LDFLAGS :=
-else ifneq ($(WINDOWS_HOST),)
-# MSYS2 installs Qt 6 tools with a versioned suffix.
-QMAKE ?= $(shell command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake)
-BUILD_MAKE ?= mingw32-make
-BUILD_DIR := build/ucrt64
-QMAKE_SPEC := -spec win32-g++
-APP := TIATracker.exe
-EXE_SUFFIX := .exe
-TEST_LDFLAGS := -mconsole
-else
+else ifeq ($(HOST_OS),Linux)
 # Use the native Linux toolchain and let qmake select its default platform spec.
 DEPENDENCY_HINT := On Debian/Mint: sudo apt install build-essential pkg-config qt6-base-dev qt6-base-dev-tools qmake6 libsdl2-dev
 QMAKE ?= $(shell command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake)
@@ -37,6 +27,15 @@ QMAKE_SPEC :=
 APP := TIATracker
 EXE_SUFFIX :=
 TEST_LDFLAGS :=
+else
+# MSYS2 installs Qt 6 tools with a versioned suffix.
+QMAKE ?= $(shell command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake)
+BUILD_MAKE ?= mingw32-make
+BUILD_DIR := build/ucrt64
+QMAKE_SPEC := -spec win32-g++
+APP := TIATracker.exe
+EXE_SUFFIX := .exe
+TEST_LDFLAGS := -mconsole
 endif
 JOBS ?= 4
 DEB_VERSION ?= 1.3.1-1
@@ -53,15 +52,12 @@ else ifeq ($(HOST_OS),Linux)
 	mkdir -p $(BUILD_DIR)/data
 	cp -R data/. $(BUILD_DIR)/data/
 	cp -R player instruments songs guides $(BUILD_DIR)/data/
-else
-	cp -R data/. $(BUILD_DIR)/
-	cp -R player instruments songs guides $(BUILD_DIR)/
 endif
 
 check:
 ifeq ($(HOST_OS),Darwin)
 	@xcode-select -p >/dev/null 2>&1 || { echo "Install Apple's Command Line Tools; see README.md."; exit 1; }
-else ifneq ($(WINDOWS_HOST),)
+else ifneq ($(HOST_OS),Linux)
 	@test "$$MSYSTEM" = UCRT64 || { echo "Open an MSYS2 UCRT64 terminal first."; exit 1; }
 endif
 	@for tool in "$(QMAKE)" "$(BUILD_MAKE)" "$(CXX)" pkg-config; do \
@@ -88,19 +84,19 @@ test-resources: check
 	$(BUILD_MAKE) -C build/tests/resources -j$(JOBS)
 	./build/tests/resources/applicationdata-tests$(EXE_SUFFIX)
 
-# Windows development builds look for data in the working directory.
+# Resource lookup is independent of the working directory.
 run: all
 	cd $(BUILD_DIR) && ./$(APP)
 
 ifeq ($(HOST_OS),Darwin)
 deploy: all
 	bash scripts/deploy-macos.sh "$(QMAKE)"
-else ifneq ($(WINDOWS_HOST),)
-deploy: all
-	bash scripts/deploy-ucrt64.sh "$(QMAKE)"
-else
+else ifeq ($(HOST_OS),Linux)
 deploy: all
 	bash scripts/deploy-debian.sh "$(DEB_VERSION)"
+else
+deploy: all
+	bash scripts/deploy-ucrt64.sh "$(QMAKE)"
 endif
 
 clean:

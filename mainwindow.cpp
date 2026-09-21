@@ -76,13 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings settings("Kylearan", "TIATracker");
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("state").toByteArray(), 1);
-#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
-    // Always start in the personal resource folders, not a saved bundle location.
-    curSongsDialogPath = applicationDataPath("songs");
-    ui->tabInstruments->curInstrumentsDialogPath = applicationDataPath("instruments");
-    ui->tabPercussion->curPercussionDialogPath = applicationDataPath("instruments");
-    ui->tabOptions->curGuidesDialogPath = applicationDataPath("guides");
-#else
+    
     if (settings.contains("songsPath")) {
         curSongsDialogPath = settings.value("songsPath").toString();
     } else {
@@ -103,7 +97,6 @@ MainWindow::MainWindow(QWidget *parent) :
     } else {
         ui->tabOptions->curGuidesDialogPath = applicationDataPath("guides");
     }
-#endif
 
     // Context menu for envelope widgets
     waveformContextMenu.addAction(&actionInsertBefore);

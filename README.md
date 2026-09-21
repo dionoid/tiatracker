@@ -40,8 +40,15 @@ For feedback, bug reports and feature requests, send a mail to andre.wichmann@gm
 TIATracker requires Qt 6, SDL2 and a C++17-capable compiler. The build continues
 to use qmake; Qt Creator is optional.
 
-The macOS setup was tested with Homebrew Qt 6.11.2 after installation. The Qt 6
-Windows and Linux instructions below have not been tested on those platforms.
+On all platforms, personal resources live in `TIATracker` inside the system's
+configured Documents folder, resolved through Qt. References to `~/Documents`
+below assume the default location; redirected or localized Documents folders
+are respected. If you previously used `~/Documents/TIATracker` but your configured
+Documents folder differs, copy your customized resources into the new location.
+
+The macOS setup was tested with Homebrew Qt 6.11.2 after installation.
+The Windows build and resource tests were also verified with MSYS2 UCRT64.
+The Linux instructions below have not been tested on that platform.
 
 ### Linux: Debian / Linux Mint (Qt 6)
 
@@ -149,38 +156,47 @@ make run
 ```
 
 The Makefile runs `qmake6` (falling back to `qmake`, which must be Qt 6) and
-`mingw32-make`, then copies the required data,
-player sources and examples to `build/ucrt64/`. It uses the installed SDL2
-package. You do not need a separate `make install` step.
+`mingw32-make`. The keymap, manual, license, player templates, songs, instruments
+and guides are embedded in the executable. It uses the installed SDL2 package.
+You do not need a separate `make install` step.
 
-The executable is `build/ucrt64/TIATracker.exe`. `make run` starts it from that
-directory so it can find its data. Run from the UCRT64 terminal so the Qt and
-SDL2 DLLs are available on `PATH`.
+The development executable is `build/ucrt64/TIATracker.exe`. Run from the UCRT64
+terminal so the Qt and SDL2 DLLs are available on `PATH`. Resources are independent
+of the working directory.
+
+On startup, missing resources are copied to **Documents/TIATracker**, using the
+Windows Documents location (including OneDrive or other folder redirection).
+The app reads the personal copies, and its file dialogs start in the corresponding
+subfolders. Existing files are never overwritten; new defaults are added and
+deleted defaults are restored on the next launch. Copy customized files from older
+installations into this folder to keep using them. Restart after editing the keymap.
 
 The interface follows your display's DPI scaling, including
 the track editor and piano keyboard. On Windows, adjust **Settings > System >
 Display > Scale** to change the size of text and controls. It also
 preserves fractional scale settings such as 125% and 150%.
 
-To run from Windows Explorer without an MSYS2 terminal, create a Windows bundle:
+To create a single executable that runs without MSYS2 or separately installed Qt/SDL:
 
 ```sh
 make deploy
 ```
 
-Double-click `build/windows/TIATracker.exe`. This folder includes the application
-data, Qt plugins, SDL2, compiler runtime DLLs and their dependencies. Copy or zip
-the **entire `build/windows/` folder**, rather than just the executable. No changes
-to the Windows `PATH` are needed. Run `make deploy` again after rebuilding or
-updating dependencies to refresh the bundle. It overwrites the bundled data and
-examples, so save your own songs outside the build folder.
+Double-click `build/windows/TIATracker.exe`. **Only this file needs to be copied.**
+It embeds the application, its resources, Qt plugins, SDL2, compiler runtime DLLs
+and their dependencies. A native launcher extracts the runtime into a unique
+temporary folder, starts the app, and removes that runtime folder when the app
+exits normally. Personal resources remain in Documents/TIATracker.
+No changes to Windows `PATH` are needed. Run `make deploy` again after rebuilding
+or updating dependencies. Rebuilding does not overwrite personal resources.
 
 Other commands:
 
 ```sh
 make JOBS=8    # Compile with eight parallel jobs (default: four)
-make clean     # Remove compiled files; keep the copied data and examples
+make clean     # Remove compiled files; keep personal resources
 make test-audio # Check sample scheduling using SDL's silent dummy device
+make test-resources # Check embedded resources and preservation of personal files
 ```
 
 Playback register changes are scheduled at audio-sample boundaries: 882 samples

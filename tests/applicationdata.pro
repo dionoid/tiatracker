@@ -8,3 +8,4 @@ DESTDIR = .
 INCLUDEPATH += ..
 SOURCES += resource-setup.cpp ../applicationdata.cpp
 HEADERS += ../applicationdata.h
+win32: include(../windows-resources.pri)
