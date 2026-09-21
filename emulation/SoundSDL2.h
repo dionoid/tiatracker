@@ -20,7 +20,9 @@
 #ifndef SOUND_SDL2_HXX
 #define SOUND_SDL2_HXX
 
+#ifndef SDL_MAIN_HANDLED
 #define SDL_MAIN_HANDLED
+#endif
 #include <SDL.h>
 
 #include "bspf.h"

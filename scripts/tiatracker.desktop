@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TIATracker
+Comment=Compose music for the Atari VCS 2600
+Exec=tiatracker
+Icon=tiatracker
+Terminal=false
+Categories=AudioVideo;Audio;Midi;

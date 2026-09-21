@@ -6,7 +6,9 @@
  */
 
 #include "mainwindow.h"
+#include "applicationdata.h"
 #include <QApplication>
+#include <QDebug>
 #include <QIcon>
 #include <QFile>
 #include <QString>
@@ -35,16 +37,15 @@
 #include <QCheckBox>
 #include "optionstab.h"
 #include <QTextStream>
+#include <QMessageBox>
 
 
 #include "SDL.h"
-#undef main
 int main(int argc, char *argv[])
 {
-    // Scale custom-painted widgets and their mouse coordinates along with the
-    // standard controls. These attributes must be set before QApplication.
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    SDL_SetMainReady();
+
+    // Qt 6 always enables high-DPI scaling; preserve fractional scale factors.
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
                 Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QApplication a(argc, argv);
@@ -54,10 +55,26 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon(":/graphics/tt_icon.png"));
 #endif
 
+    QString resourceError;
+    if (!ApplicationData::initialize(resourceError)) {
+        QMessageBox::critical(nullptr, "TIATracker resource setup failed",
+                              resourceError + "\n\nTIATracker needs access to "
+                              + ApplicationData::path()
+                              + ". Check folder permissions."
+#ifdef Q_OS_MACOS
+                              " Allow Documents access in System Settings."
+#endif
+                              );
+        return 1;
+    }
+
     // Load and set stylesheet
     QFile styleFile(":/style.qss");
-    styleFile.open(QFile::ReadOnly);
-    a.setStyleSheet(styleFile.readAll());
+    if (styleFile.open(QFile::ReadOnly)) {
+        a.setStyleSheet(styleFile.readAll());
+    } else {
+        qWarning() << "Unable to load application stylesheet:" << styleFile.errorString();
+    }
 
     // Track
     Track::Track myTrack{};

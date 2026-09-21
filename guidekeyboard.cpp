@@ -145,13 +145,14 @@ void GuideKeyboard::paintEvent(QPaintEvent *) {
 /*************************************************************************/
 
 void GuideKeyboard::mousePressEvent(QMouseEvent *event) {
-    int octave = int(event->x()/(keyWidth*numWhiteKeysPerOctave));
+    const QPoint position = event->position().toPoint();
+    int octave = int(position.x()/(keyWidth*numWhiteKeysPerOctave));
     int keyIndex;
-    if (event->y() < blackKeyHeight) {
+    if (position.y() < blackKeyHeight) {
         // Potential black key
         // TODO: More intelligent calculation instead of brute force
         int octaveBaseKey = octave*12;
-        int xPos = event->x();
+        int xPos = position.x();
         keyIndex = -1;
         for (int key = 0; key < 12; ++key) {
             if (octaveTraits[key].isBlack) {
@@ -167,7 +168,7 @@ void GuideKeyboard::mousePressEvent(QMouseEvent *event) {
         }
     } else {
         // White key
-        keyIndex = calcKeyIndexForWhiteKey(event->x());
+        keyIndex = calcKeyIndexForWhiteKey(position.x());
     }
 
     keyInfo[keyIndex].isEnabled = !keyInfo[keyIndex].isEnabled;

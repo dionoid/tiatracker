@@ -4,13 +4,11 @@
 #
 #-------------------------------------------------
 
-!equals(QT_MAJOR_VERSION, 5)|lessThan(QT_MINOR_VERSION, 15) {
-    error("TIATracker requires Qt 5.15 or newer within Qt 5.")
+!equals(QT_MAJOR_VERSION, 6) {
+    error("TIATracker requires Qt 6.")
 }
 
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui widgets
 
 TARGET = TIATracker
 TEMPLATE = app
@@ -18,6 +16,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    applicationdata.cpp \
     pianokeyboard.cpp \
     tiasound/tiasound.cpp \
     tiasound/instrumentpitchguide.cpp \
@@ -54,6 +53,7 @@ SOURCES += main.cpp\
     createguidedialog.cpp
 
 HEADERS  += mainwindow.h \
+    applicationdata.h \
     pianokeyboard.h \
     tiasound/tiasound.h \
     tiasound/instrumentpitchguide.h \
@@ -101,7 +101,13 @@ FORMS    += mainwindow.ui \
     aboutdialog.ui \
     createguidedialog.ui
 
-CONFIG += c++11
+CONFIG += c++17
+
+# The supported Homebrew SDL2 build requires macOS 15 or newer.
+# Do not advertise compatibility below that of the linked libraries.
+macx:lessThan(QMAKE_MACOSX_DEPLOYMENT_TARGET, 15.0) {
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 15.0
+}
 
 CONFIG(release, debug|release) {
     CONFIG += optimize_full
@@ -110,6 +116,8 @@ CONFIG(release, debug|release) {
 
 RESOURCES += \
     main.qrc
+
+win32: include(windows-resources.pri)
 
 DISTFILES += \
     style.qss \
@@ -121,39 +129,56 @@ DISTFILES += \
 CONFIG += link_pkgconfig
 PKGCONFIG += sdl2
 
+# Import flags now so SDL's Windows entry point can be removed after import.
+# Qt owns application startup; SDL is used for audio only.
+load(link_pkgconfig)
+DEFINES -= main=SDL_main
+DEFINES += SDL_MAIN_HANDLED
+LIBS -= -lSDL2main
+
 # Copy files to output directory
-install_it.path = $$OUT_PWD
+resource_output = $$OUT_PWD
+unix:!macx: resource_output = $$OUT_PWD/data
+install_it.path = $$resource_output
 install_it.files = $$PWD/data/*
 
 INSTALLS += \
     install_it
 
 # Copy player to output directory
-install_player.path = $$OUT_PWD
+install_player.path = $$resource_output
 install_player.files = $$PWD/player
 
 INSTALLS += \
     install_player
 
 # Copy examples to output directory
-install_instruments.path = $$OUT_PWD
+install_instruments.path = $$resource_output
 install_instruments.files = $$PWD/instruments
 
 INSTALLS += \
     install_instruments
 
-install_songs.path = $$OUT_PWD
+install_songs.path = $$resource_output
 install_songs.files = $$PWD/songs
 
 INSTALLS += \
     install_songs
 
-install_guides.path = $$OUT_PWD
+install_guides.path = $$resource_output
 install_guides.files = $$PWD/guides
 
 INSTALLS += \
     install_guides
 
+win32: INSTALLS -= install_it install_player install_instruments install_songs install_guides
+
 
 win32: RC_ICONS = graphics/tt_icon.ico
-macx: ICON = graphics/tt_icon.icns
+macx {
+    ICON = graphics/tt_icon.icns
+    # Include defaults in ordinary qmake/Qt Creator builds as well as deployments.
+    bundled_data.files = $$files($$PWD/data/*) $$PWD/player $$PWD/instruments $$PWD/songs $$PWD/guides
+    bundled_data.path = Contents/Resources/data
+    QMAKE_BUNDLE_DATA += bundled_data
+}

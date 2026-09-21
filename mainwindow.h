@@ -203,6 +203,7 @@ private:
     QAction actionToggleLoop{this};
 
     QString curSongsDialogPath;
+    QString curExportsDialogPath;
 };
 
 #endif // MAINWINDOW_H

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bundle the UCRT64 executable, Qt plugins and their recursive DLL dependencies.
+# Embed the application, Qt plugins and recursive DLL dependencies in one EXE.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -8,11 +8,11 @@ qmake=${1:-qmake}
 runtime_dir=/ucrt64/bin
 plugin_dir=$(cygpath -u "$("$qmake" -query QT_INSTALL_PLUGINS)")
 system_dir=$(cygpath -u "$SYSTEMROOT")/System32
-destination=build/windows
+mkdir -p build/windows
+destination=$(mktemp -d build/windows/runtime.XXXXXX)
+trap 'rm -rf -- "$destination"' EXIT
 mkdir -p "$destination/platforms"
 cp build/ucrt64/TIATracker.exe "$destination/"
-cp -R data/. "$destination/"
-cp -R player instruments songs guides "$destination/"
 cp "$plugin_dir/platforms/qwindows.dll" "$destination/platforms/"
 
 shopt -s nullglob
@@ -54,5 +54,22 @@ for ((index=0; index<${#queue[@]}; ++index)); do
     done <<< "$(awk '/DLL Name:/ { sub(/\r$/, "", $3); print $3 }' <<< "$imports")"
 done
 
-echo "Windows bundle ready: $destination/TIATracker.exe"
-echo 'Keep the entire windows folder together when copying or zipping it.'
+# Generate a Win32 resource table and matching paths for the native bootstrap.
+resource_script="$destination/payload.rc"
+header="$destination/payload.h"
+printf '1 ICON "%s"\n' "$(cygpath -m "$PWD/graphics/tt_icon.ico")" > "$resource_script"
+printf 'static const struct { unsigned short id; const wchar_t *path; } payload[] = {\n' > "$header"
+id=10
+while IFS= read -r -d '' file; do
+    relative=${file#"$destination/"}
+    printf '%s RCDATA "%s"\n' "$id" "$(cygpath -m "$PWD/$file")" >> "$resource_script"
+    printf '    {%s, L"%s"},\n' "$id" "$relative" >> "$header"
+    id=$((id + 1))
+done < <(find "$destination" -type f ! -name 'payload.rc' ! -name 'payload.h' -print0 | sort -z)
+printf '};\n' >> "$header"
+"$runtime_dir/windres.exe" "$resource_script" -O coff -o "$destination/payload.o"
+"$runtime_dir/g++.exe" -std=c++17 -Os -static -municode -mwindows \
+    -I"$destination" scripts/windows-launcher.cpp "$destination/payload.o" \
+    -lole32 -o "$destination/standalone.exe"
+mv "$destination/standalone.exe" build/windows/TIATracker.exe
+echo 'Windows standalone executable ready: build/windows/TIATracker.exe'

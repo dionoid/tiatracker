@@ -170,7 +170,8 @@ void EnvelopeShaper::processMouseEvent(int x, int y) {
 void EnvelopeShaper::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         isMouseDragging = true;
-        processMouseEvent(event->x(), event->y());
+        const QPoint position = event->position().toPoint();
+        processMouseEvent(position.x(), position.y());
     }
 }
 
@@ -183,7 +184,8 @@ void EnvelopeShaper::mouseReleaseEvent(QMouseEvent *) {
 
 void EnvelopeShaper::mouseMoveEvent(QMouseEvent *event) {
     if (isMouseDragging) {
-        processMouseEvent(event->x(), event->y());
+        const QPoint position = event->position().toPoint();
+        processMouseEvent(position.x(), position.y());
     }
 }
 

@@ -112,10 +112,11 @@ void Timeline::paintEvent(QPaintEvent *) {
 /*************************************************************************/
 
 void Timeline::mousePressEvent(QMouseEvent *event) {
-    if (event->y() >= channelMargin && event->y() < height() - channelMargin) {
-        int channel = event->x() < width()/2 ? 0 : 1;
+    const QPoint position = event->position().toPoint();
+    if (position.y() >= channelMargin && position.y() < height() - channelMargin) {
+        int channel = position.x() < width()/2 ? 0 : 1;
         double rowHeight = calcRowHeight();
-        int newEditPos = int((event->y() - channelMargin)/rowHeight + 0.5);
+        int newEditPos = int((position.y() - channelMargin)/rowHeight + 0.5);
         emit changeEditPos(channel, newEditPos);
     }
 }

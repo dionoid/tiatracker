@@ -37,7 +37,7 @@ public:
 
     QString constructRowString(int curPatternNoteIndex, Track::Pattern *curPattern);
 
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
 signals:
     void editPosChanged(int newPos);

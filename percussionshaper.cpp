@@ -166,7 +166,8 @@ void PercussionShaper::processMouseEvent(int x, int y) {
 void PercussionShaper::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         isMouseDragging = true;
-        processMouseEvent(event->x(), event->y());
+        const QPoint position = event->position().toPoint();
+        processMouseEvent(position.x(), position.y());
     }
 }
 
@@ -180,7 +181,8 @@ void PercussionShaper::mouseReleaseEvent(QMouseEvent *) {
 
 void PercussionShaper::mouseMoveEvent(QMouseEvent *event) {
     if (isMouseDragging) {
-        processMouseEvent(event->x(), event->y());
+        const QPoint position = event->position().toPoint();
+        processMouseEvent(position.x(), position.y());
     }
 }
 

@@ -114,8 +114,9 @@ void WaveformShaper::contextMenuEvent(QContextMenuEvent *event) {
 
 void WaveformShaper::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        if (event->x() >= legendCellSize && event->y() < valueAreaHeight) {
-           int column = (event->x() - legendCellSize)/cellWidth;
+          const QPoint position = event->position().toPoint();
+          if (position.x() >= legendCellSize && position.y() < valueAreaHeight) {
+              int column = (position.x() - legendCellSize)/cellWidth;
            (*values)[column] = distortionPen;
            update();
         }
@@ -135,9 +136,9 @@ void WaveformShaper::wheelEvent(QWheelEvent *event) {
         int delta = wheelDelta/100;
         // Get index of current waveform
         TiaSound::Distortion oldDist = (*values)[column];
-        int oldIndex = PercussionTab::availableWaveforms.indexOf(oldDist);
-        int newIndex = oldIndex + delta;
-        newIndex = std::max(newIndex, 0);
+        qsizetype oldIndex = PercussionTab::availableWaveforms.indexOf(oldDist);
+        qsizetype newIndex = oldIndex + delta;
+        newIndex = std::max(newIndex, qsizetype(0));
         newIndex = std::min(newIndex, PercussionTab::availableWaveforms.size() - 1);
         (*values)[column] = PercussionTab::availableWaveforms[newIndex];
         update();

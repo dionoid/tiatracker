@@ -512,9 +512,10 @@ void PatternEditor::mousePressEvent(QMouseEvent *event) {
     if (event->button() != Qt::LeftButton) {
         return;
     }
+    const QPoint position = event->position().toPoint();
     int channel;
     int noteIndex;
-    if (!clickedInValidRow(event->x(), event->y(), &channel, &noteIndex)) {
+    if (!clickedInValidRow(position.x(), position.y(), &channel, &noteIndex)) {
         return;
     }
     selectedChannel = channel;
