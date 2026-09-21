@@ -78,7 +78,14 @@ bool initialize(QString &error) {
         error = QString("Bundled resources are missing from %1. Please reinstall TIATracker.").arg(bundledData);
         return false;
     }
-    return copyMissingFiles(bundledData, path(), error);
+    if (!copyMissingFiles(bundledData, path(), error)) {
+        return false;
+    }
+    if (!QDir().mkpath(path("exports"))) {
+        error = QString("Cannot create exports folder %1.").arg(path("exports"));
+        return false;
+    }
+    return true;
 }
 
 }

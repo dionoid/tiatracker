@@ -1,6 +1,6 @@
 # TIATracker #
 
-A music tracker for making Atari VCS 2600 music on the PC, including a new sound routine for the VCS. Current version: 1.3
+A music tracker for making Atari VCS 2600 music on the PC, including a new sound routine for the VCS. Current version: 1.3.1
 
 (c) 2016-2017 by Andre "Kylearan" Wichmann (andre.wichmann@gmx.de)
 
@@ -45,6 +45,10 @@ configured Documents folder, resolved through Qt. References to `~/Documents`
 below assume the default location; redirected or localized Documents folders
 are respected. If you previously used `~/Documents/TIATracker` but your configured
 Documents folder differs, copy your customized resources into the new location.
+
+Song exports (DASM, MADS, k65 and CSV) default to `Documents/TIATracker/exports`,
+which is created at startup. The last selected export folder is remembered
+separately from the song open/save folder.
 
 The macOS setup was tested with Homebrew Qt 6.11.2 after installation.
 The Windows build and resource tests were also verified with MSYS2 UCRT64.

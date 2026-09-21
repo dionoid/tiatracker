@@ -76,7 +76,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings settings("Kylearan", "TIATracker");
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("state").toByteArray(), 1);
-    
+    curExportsDialogPath = settings.value("exportsPath", applicationDataPath("exports")).toString();
+    if (!QFileInfo(curExportsDialogPath).isDir()) {
+        curExportsDialogPath = applicationDataPath("exports");
+    }
     if (settings.contains("songsPath")) {
         curSongsDialogPath = settings.value("songsPath").toString();
     } else {
@@ -747,6 +750,7 @@ void MainWindow::on_actionQuit_triggered() {
     settings.setValue("geometry", saveGeometry());
     settings.setValue("state", saveState(1));
     settings.setValue("songsPath", curSongsDialogPath);
+    settings.setValue("exportsPath", curExportsDialogPath);
     settings.setValue("instrumentsPath", ui->tabInstruments->curInstrumentsDialogPath);
     settings.setValue("percussionPath", ui->tabPercussion->curPercussionDialogPath);
     settings.setValue("guidesPath", ui->tabOptions->curGuidesDialogPath);
@@ -944,11 +948,12 @@ QString MainWindow::listToK65Bytes(QList<int> list) {
 
 QString MainWindow::getExportFileName() {
     QFileDialog dialog(this);
+    dialog.setDirectory(curExportsDialogPath);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setViewMode(QFileDialog::Detail);
     // Remove extension, if there
-    QString trackName = pTrack->name;
+    QString trackName = QFileInfo(pTrack->name).fileName();
     if (trackName.endsWith(".ttt")) {
         trackName.truncate(trackName.length() - 4);
     }
@@ -961,6 +966,7 @@ QString MainWindow::getExportFileName() {
         return "";
     }
     QString fileName = fileNames[0];
+    curExportsDialogPath = dialog.directory().absolutePath();
     // Remove extension, if there
     if (fileName.endsWith(".ttt")) {
         fileName.truncate(fileName.length() - 4);
@@ -2016,12 +2022,13 @@ void MainWindow::on_actionExport_track_data_to_csv_triggered() {
 
     // Ask for filename
     QFileDialog dialog(this);
+    dialog.setDirectory(curExportsDialogPath);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter("*.csv");
     dialog.setDefaultSuffix("csv");
     dialog.setViewMode(QFileDialog::Detail);
-    QString trackName = pTrack->name;
+    QString trackName = QFileInfo(pTrack->name).fileName();
     if (trackName.endsWith(".ttt")) {
         trackName.truncate(trackName.length() - 4);
     }
@@ -2038,6 +2045,7 @@ void MainWindow::on_actionExport_track_data_to_csv_triggered() {
     }
     QString fileName = fileNames[0];
 
+    curExportsDialogPath = dialog.directory().absolutePath();
     // Export to csv
     QFile outFile(fileName);
     if (!outFile.open(QIODevice::WriteOnly)) {
