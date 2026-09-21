@@ -69,6 +69,7 @@ make check      # Verify the toolchain and dependencies
 make            # Build into build/linux/
 make run        # Build and launch with the application data available
 make test-audio # Run the audio scheduling tests using SDL's dummy device
+make test-resources # Test resource setup and preservation of personal files
 ```
 
 Run `make` to build, `make run` to launch, or `make test-audio` to run the audio
@@ -76,9 +77,10 @@ scheduling tests. The Makefile uses `qmake6` when available, otherwise
 `qmake`; the selected tool must belong to Qt 6. Use
 `make QMAKE=/path/to/qt6/bin/qmake` to select a specific Qt 6 installation.
 
-The executable and copied application data are placed in `build/linux/`.
-`make run` launches `build/linux/TIATracker` from that directory so it can
-find its data. Qt and SDL2 must remain installed on the machine. `make clean`
+The executable is placed in `build/linux/`, with default resources in `build/linux/data/`.
+On startup, the app copies missing defaults from that data folder to
+`~/Documents/TIATracker/` and uses the personal copies. You can launch it from
+any working directory. Qt and SDL2 must remain installed on the machine. `make clean`
 and `make JOBS=8` are supported.
 
 #### Debian / Mint package
@@ -96,13 +98,16 @@ Override the package version with `make deploy DEB_VERSION=1.3.1-2`.
 Building the package does not require sudo and does not install it.
 
 Launch **TIATracker** from the desktop application menu or run `tiatracker`.
-The launcher creates editable copies of the keymap and examples under
-`${XDG_DATA_HOME:-~/.local/share}/tiatracker/`, preserving existing files on
-subsequent launches. Player templates and the manual link to the installed data
-so package upgrades refresh them. On the first launch with this data directory,
-saved song, instrument, percussion and guide dialog locations reset to these
-personal folders. Subsequent launches remember folders you choose normally.
+On startup, the app copies the keymap, songs, instruments, guides, player
+templates, manual and license from the installed data to `~/Documents/TIATracker/`.
+All copies are editable. Later launches preserve existing files, add new defaults,
+and restore missing files. The app reads its resources from this personal folder. Song, instrument,
+percussion and guide dialogs start in its corresponding subfolders on each launch.
 Removing the package leaves your personal data intact.
+
+Older personal data under `${XDG_DATA_HOME:-~/.local/share}/tiatracker/` is left
+untouched. Copy any customized keymap or examples into `~/Documents/TIATracker/`
+to keep using them. Restart the app after editing the keymap.
 
 Qt and SDL2 are installed by APT as runtime dependencies, rather than bundled.
 Library version requirements are generated from the built executable using

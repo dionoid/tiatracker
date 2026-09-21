@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings settings("Kylearan", "TIATracker");
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("state").toByteArray(), 1);
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
     // Always start in the personal resource folders, not a saved bundle location.
     curSongsDialogPath = applicationDataPath("songs");
     ui->tabInstruments->curInstrumentsDialogPath = applicationDataPath("instruments");

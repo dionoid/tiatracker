@@ -135,33 +135,35 @@ DEFINES += SDL_MAIN_HANDLED
 LIBS -= -lSDL2main
 
 # Copy files to output directory
-install_it.path = $$OUT_PWD
+resource_output = $$OUT_PWD
+unix:!macx: resource_output = $$OUT_PWD/data
+install_it.path = $$resource_output
 install_it.files = $$PWD/data/*
 
 INSTALLS += \
     install_it
 
 # Copy player to output directory
-install_player.path = $$OUT_PWD
+install_player.path = $$resource_output
 install_player.files = $$PWD/player
 
 INSTALLS += \
     install_player
 
 # Copy examples to output directory
-install_instruments.path = $$OUT_PWD
+install_instruments.path = $$resource_output
 install_instruments.files = $$PWD/instruments
 
 INSTALLS += \
     install_instruments
 
-install_songs.path = $$OUT_PWD
+install_songs.path = $$resource_output
 install_songs.files = $$PWD/songs
 
 INSTALLS += \
     install_songs
 
-install_guides.path = $$OUT_PWD
+install_guides.path = $$resource_output
 install_guides.files = $$PWD/guides
 
 INSTALLS += \

@@ -60,7 +60,11 @@ int main(int argc, char *argv[])
         QMessageBox::critical(nullptr, "TIATracker resource setup failed",
                               resourceError + "\n\nTIATracker needs access to "
                               + ApplicationData::path()
-                              + ". Check folder permissions and allow Documents access in System Settings.");
+                              + ". Check folder permissions."
+#ifdef Q_OS_MACOS
+                              " Allow Documents access in System Settings."
+#endif
+                              );
         return 1;
     }
 

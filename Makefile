@@ -49,6 +49,10 @@ ifeq ($(HOST_OS),Darwin)
 	# Refresh nested resources even when only an existing example/template changed.
 	cp -R data/. $(BUILD_DIR)/TIATracker.app/Contents/Resources/data/
 	cp -R player instruments songs guides $(BUILD_DIR)/TIATracker.app/Contents/Resources/data/
+else ifeq ($(HOST_OS),Linux)
+	mkdir -p $(BUILD_DIR)/data
+	cp -R data/. $(BUILD_DIR)/data/
+	cp -R player instruments songs guides $(BUILD_DIR)/data/
 else
 	cp -R data/. $(BUILD_DIR)/
 	cp -R player instruments songs guides $(BUILD_DIR)/
@@ -84,7 +88,7 @@ test-resources: check
 	$(BUILD_MAKE) -C build/tests/resources -j$(JOBS)
 	./build/tests/resources/applicationdata-tests$(EXE_SUFFIX)
 
-# Non-macOS development builds look for data in the working directory.
+# Windows development builds look for data in the working directory.
 run: all
 	cd $(BUILD_DIR) && ./$(APP)
 

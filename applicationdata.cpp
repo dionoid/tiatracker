@@ -8,15 +8,9 @@
 namespace ApplicationData {
 
 QString path(const QString &relativePath) {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
     return QDir(QDir::home().filePath("Documents/TIATracker")).absoluteFilePath(relativePath);
 #else
-#ifdef Q_OS_LINUX
-    const QString userDataDirectory = qEnvironmentVariable("TIATRACKER_DATA_DIR");
-    if (!userDataDirectory.isEmpty()) {
-        return QDir(userDataDirectory).absoluteFilePath(relativePath);
-    }
-#endif
     return QDir::current().absoluteFilePath(relativePath);
 #endif
 }
@@ -70,18 +64,25 @@ bool copyMissingFiles(const QString &source, const QString &destination, QString
 
 bool initialize(QString &error) {
     error.clear();
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
+    const QDir executableDirectory(QCoreApplication::applicationDirPath());
 #ifdef Q_OS_MACOS
-    const QString bundledData = QDir(QCoreApplication::applicationDirPath())
-            .absoluteFilePath("../Resources/data");
+    const QString bundledData = executableDirectory.absoluteFilePath("../Resources/data");
+#else
+    // Development builds use data/; Debian packages use /usr/share/tiatracker.
+    QString bundledData = executableDirectory.absoluteFilePath("data");
+    if (!QFileInfo(QDir(bundledData).filePath("keymap.cfg")).isFile()) {
+        bundledData = executableDirectory.absoluteFilePath("../../share/tiatracker");
+    }
+#endif
     if (!QFileInfo(QDir(bundledData).filePath("keymap.cfg")).isFile()) {
         error = QString("Bundled resources are missing from %1. Please reinstall TIATracker.").arg(bundledData);
         return false;
     }
-    if (!copyMissingFiles(bundledData, path(), error)) {
-        return false;
-    }
-#endif
+    return copyMissingFiles(bundledData, path(), error);
+#else
     return true;
+#endif
 }
 
 }

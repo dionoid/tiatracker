@@ -30,12 +30,13 @@ static QByteArray readFile(const QString &filename) {
     return file.readAll();
 }
 
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
 static void runStartup(const QString &executable, const QString &home, bool succeeds = true) {
     QProcess child;
     auto environment = QProcessEnvironment::systemEnvironment();
     environment.insert("HOME", home);
     environment.insert("CFFIXED_USER_HOME", home);
+    environment.insert("TIATRACKER_DATA_DIR", home + "/obsolete data");
     child.setProcessEnvironment(environment);
     child.setWorkingDirectory("/");
     child.start(executable, {"--initialize", home});
@@ -49,7 +50,7 @@ static void runStartup(const QString &executable, const QString &home, bool succ
 
 int main(int argc, char **argv) {
     QCoreApplication app(argc, argv);
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
     if (app.arguments().size() == 3 && app.arguments().at(1) == "--initialize") {
         const QString home = app.arguments().at(2);
         // Never let an environment-isolation failure touch real Documents.
@@ -105,13 +106,20 @@ int main(int argc, char **argv) {
     check(!ApplicationData::copyMissingFiles(source + "/license.txt", destination + "/songs", error), "file collision fails");
     check(readFile(temporary.path() + "/blocked") == "not a directory", "collision does not clobber user file");
 
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
 #ifdef Q_OS_MACOS
     // Exercise real startup resolution from a relocated .app with no sibling data.
     const QString bundle = temporary.path() + "/Moved Applications/TIATracker.app/Contents";
     const QString executable = bundle + "/MacOS/resource-probe";
-    check(QDir().mkpath(bundle + "/MacOS"), "create probe bundle");
+    const QString defaults = bundle + "/Resources/data";
+#else
+    const QString bundle = temporary.path() + "/Moved Installation/usr";
+    const QString executable = bundle + "/lib/tiatracker/resource-probe";
+    const QString defaults = bundle + "/share/tiatracker";
+#endif
+    check(QDir().mkpath(QFileInfo(executable).absolutePath()), "create probe directory");
     check(QFile::copy(QCoreApplication::applicationFilePath(), executable), "copy probe executable");
-    check(ApplicationData::copyMissingFiles(source, bundle + "/Resources/data", error), error);
+    check(ApplicationData::copyMissingFiles(source, defaults, error), error);
     const QString home = temporary.path() + "/test home";
     check(QDir().mkpath(home), "create isolated home");
     runStartup(executable, home);
@@ -122,15 +130,25 @@ int main(int argc, char **argv) {
     writeFile(personal + "/keymap.cfg", "custom shortcuts");
     runStartup(executable, home);
     check(readFile(personal + "/keymap.cfg") == "custom shortcuts", "startup preserves edited keymap");
-    check(readFile(bundle + "/Resources/data/keymap.cfg") == readFile(source + "/keymap.cfg"), "bundle unchanged");
-    check(QFile::remove(bundle + "/Resources/data/keymap.cfg"), "remove bundled keymap");
+    check(readFile(defaults + "/keymap.cfg") == readFile(source + "/keymap.cfg"), "bundle unchanged");
+    check(QFile::remove(defaults + "/keymap.cfg"), "remove bundled keymap");
     runStartup(executable, home, false);
     check(readFile(personal + "/keymap.cfg") == "custom shortcuts", "failed startup preserves user files");
-#elif defined(Q_OS_LINUX)
-    qputenv("TIATRACKER_DATA_DIR", destination.toUtf8());
-    check(ApplicationData::path("keymap.cfg") == destination + "/keymap.cfg", "Linux launcher path unchanged");
-    qunsetenv("TIATRACKER_DATA_DIR");
-    check(ApplicationData::path("keymap.cfg") == QDir::current().filePath("keymap.cfg"), "working-directory fallback");
+#ifdef Q_OS_LINUX
+    const QString development = temporary.path() + "/development build";
+    check(ApplicationData::copyMissingFiles(source, development + "/data", error), error);
+    const QString developmentExecutable = development + "/resource-probe";
+    check(QFile::copy(QCoreApplication::applicationFilePath(), developmentExecutable), "copy development probe");
+    check(QFile::remove(development + "/data/license.txt"), "remove optional default");
+    runStartup(developmentExecutable, home);
+    check(!QFileInfo::exists(personal + "/resource-probe"), "do not copy executable");
+    check(QFile::remove(personal + "/songs/A song.ttt"), "remove personal example");
+    runStartup(developmentExecutable, home);
+    check(readFile(personal + "/songs/A song.ttt") == readFile(source + "/songs/A song.ttt"), "startup restores missing example");
+    writeFile(development + "/data/player/dasm/upgrade.asm", "new template");
+    runStartup(developmentExecutable, home);
+    check(readFile(personal + "/player/dasm/upgrade.asm") == "new template", "startup adds new defaults");
+#endif
 #endif
     QTextStream(stdout) << "Resource setup tests passed.\n";
     return 0;

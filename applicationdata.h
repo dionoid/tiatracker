@@ -6,8 +6,8 @@
 namespace ApplicationData {
 QString path(const QString &relativePath = QString());
 
-// Seed the macOS Documents folder before any resources or dialog paths are read.
-// Other platforms retain their existing launcher/working-directory behavior.
+// Seed the macOS/Linux Documents folder before resources or dialog paths are read.
+// Windows retains its working-directory behavior.
 bool initialize(QString &error);
 
 // Merge bundled defaults recursively, never replacing an existing user file.
