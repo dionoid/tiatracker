@@ -5,6 +5,7 @@ SHELL := /bin/sh
 
 HOST_OS := $(shell uname -s)
 WINDOWS_HOST := $(filter MINGW% MSYS% CYGWIN%,$(HOST_OS))
+DEPENDENCY_HINT := See README.md for dependencies.
 ifeq ($(HOST_OS),Darwin)
 # Select Homebrew's Qt 6 base tools.
 QMAKE ?= $(shell if command -v brew >/dev/null 2>&1; then printf '%s/bin/qmake' "$$(brew --prefix qtbase)"; else command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake; fi)
@@ -28,6 +29,7 @@ EXE_SUFFIX := .exe
 TEST_LDFLAGS := -mconsole
 else
 # Use the native Linux toolchain and let qmake select its default platform spec.
+DEPENDENCY_HINT := On Debian/Mint: sudo apt install build-essential pkg-config qt6-base-dev qt6-base-dev-tools qmake6 libsdl2-dev
 QMAKE ?= $(shell command -v qmake6 >/dev/null 2>&1 && echo qmake6 || echo qmake)
 BUILD_MAKE ?= $(MAKE)
 BUILD_DIR := build/linux
@@ -37,6 +39,7 @@ EXE_SUFFIX :=
 TEST_LDFLAGS :=
 endif
 JOBS ?= 4
+DEB_VERSION ?= 1.3.1-1
 
 .PHONY: all check configure run deploy clean test-audio
 
@@ -52,10 +55,10 @@ else ifneq ($(WINDOWS_HOST),)
 	@test "$$MSYSTEM" = UCRT64 || { echo "Open an MSYS2 UCRT64 terminal first."; exit 1; }
 endif
 	@for tool in "$(QMAKE)" "$(BUILD_MAKE)" "$(CXX)" pkg-config; do \
-		command -v "$$tool" >/dev/null || { echo "Missing $$tool; see README.md for dependencies."; exit 1; }; \
+		command -v "$$tool" >/dev/null || { echo "Missing $$tool. $(DEPENDENCY_HINT)"; exit 1; }; \
 	done
-	@"$(QMAKE)" -query QT_VERSION | grep -q '^6\.' || { echo "Qt 6 is required."; exit 1; }
-	@pkg-config --exists sdl2 || { echo "SDL2 is missing; see README.md for dependencies."; exit 1; }
+	@"$(QMAKE)" -query QT_VERSION | grep -q '^6\.' || { echo "Qt 6 is required. $(DEPENDENCY_HINT)"; exit 1; }
+	@pkg-config --exists sdl2 || { echo "SDL2 development files are missing. $(DEPENDENCY_HINT)"; exit 1; }
 
 configure: check
 	@mkdir -p $(BUILD_DIR)
@@ -80,9 +83,8 @@ else ifneq ($(WINDOWS_HOST),)
 deploy: all
 	bash scripts/deploy-ucrt64.sh "$(QMAKE)"
 else
-deploy:
-	@echo "Linux deployment packaging is not implemented; use make run for a local build." >&2
-	@exit 1
+deploy: all
+	bash scripts/deploy-debian.sh "$(DEB_VERSION)"
 endif
 
 clean:

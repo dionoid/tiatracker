@@ -37,6 +37,12 @@
 
 namespace {
 QString applicationDataPath(const QString &relativePath) {
+#ifdef Q_OS_LINUX
+    const QString userDataDirectory = qEnvironmentVariable("TIATRACKER_DATA_DIR");
+    if (!userDataDirectory.isEmpty()) {
+        return QDir(userDataDirectory).absoluteFilePath(relativePath);
+    }
+#endif
 #ifdef Q_OS_MACOS
     // Both macOS layouts keep editable data beside TIATracker.app, not inside
     // its signed bundle. Finder does not set the working directory here.

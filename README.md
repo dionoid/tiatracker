@@ -43,11 +43,33 @@ to use qmake; Qt Creator is optional.
 The macOS setup was tested with Homebrew Qt 6.11.2 after installation. The Qt 6
 Windows and Linux instructions below have not been tested on those platforms.
 
-### Linux: Qt 6
+### Linux: Debian / Linux Mint (Qt 6)
 
-Install a C++17-capable compiler, Make, Qt 6 development libraries and tools (Core,
+Install the build dependencies using APT:
+
+```sh
+sudo apt update
+sudo apt install build-essential pkg-config qt6-base-dev qt6-base-dev-tools qmake6 libsdl2-dev
+```
+
+These packages provide the compiler, Make, Qt 6 Core/GUI/Widgets, Qt's code
+generation tools, qmake and SDL2 headers/libraries. See the
+[Debian Qt 6 package](https://packages.debian.org/stable/qt6-base-dev) and
+[Ubuntu Qt 6 package](https://packages.ubuntu.com/noble/qt6-base-dev)
+(used by Linux Mint 22.x). Qt Creator is optional.
+
+For other Linux distributions, install a C++17-capable compiler, Make, Qt 6 development libraries and tools (Core,
 GUI, Widgets and qmake), SDL2 development libraries, and pkg-config using your
 distribution's package manager.
+
+From the repository directory:
+
+```sh
+make check      # Verify the toolchain and dependencies
+make            # Build into build/linux/
+make run        # Build and launch with the application data available
+make test-audio # Run the audio scheduling tests using SDL's dummy device
+```
 
 Run `make` to build, `make run` to launch, or `make test-audio` to run the audio
 scheduling tests. The Makefile uses `qmake6` when available, otherwise
@@ -57,8 +79,38 @@ scheduling tests. The Makefile uses `qmake6` when available, otherwise
 The executable and copied application data are placed in `build/linux/`.
 `make run` launches `build/linux/TIATracker` from that directory so it can
 find its data. Qt and SDL2 must remain installed on the machine. `make clean`
-and `make JOBS=8` are supported; Linux distribution packaging via `make deploy`
-is not implemented.
+and `make JOBS=8` are supported.
+
+#### Debian / Mint package
+
+Build an installable `.deb` for the build machine's distribution and architecture:
+
+```sh
+sudo apt install dpkg-dev binutils
+make deploy
+sudo apt install ./build/debian/tiatracker_1.3.1-1_amd64.deb
+```
+
+Use the filename printed by `make deploy` if your architecture or version differs.
+Override the package version with `make deploy DEB_VERSION=1.3.1-2`.
+Building the package does not require sudo and does not install it.
+
+Launch **TIATracker** from the desktop application menu or run `tiatracker`.
+The launcher creates editable copies of the keymap and examples under
+`${XDG_DATA_HOME:-~/.local/share}/tiatracker/`, preserving existing files on
+subsequent launches. Player templates and the manual link to the installed data
+so package upgrades refresh them. On the first launch with this data directory,
+saved song, instrument, percussion and guide dialog locations reset to these
+personal folders. Subsequent launches remember folders you choose normally.
+Removing the package leaves your personal data intact.
+
+Qt and SDL2 are installed by APT as runtime dependencies, rather than bundled.
+Library version requirements are generated from the built executable using
+[dpkg-shlibdeps](https://manpages.debian.org/stable/dpkg-dev/dpkg-shlibdeps.1.en.html).
+Build separately on each target distribution/release for reliable compatibility;
+a package built on a newer Mint system is not guaranteed to work on older Mint
+or Debian releases. Custom Qt/SDL installations without Debian package metadata
+are not supported by this packaging target.
 
 ### Windows: MSYS2 UCRT64
 
