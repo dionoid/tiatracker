@@ -1,5 +1,5 @@
 #!/bin/bash
-# Package a self-contained, ad-hoc-signed Qt 6 app in a ZIP.
+# Package a self-contained, ad-hoc-signed Qt 6 app.
 # Compatible with the Bash 3.2 shipped with macOS.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -19,9 +19,7 @@ destination="$PWD/build/macos-deploy"
 mkdir -p "$destination"
 staging=$(mktemp -d "$destination/.deploy.XXXXXX")
 trap 'rm -rf "$staging"' EXIT
-package="$staging/TIATracker"
-mkdir -p "$package"
-app="$package/TIATracker.app"
+app="$staging/TIATracker.app"
 
 # Start fresh so removed libraries, plugins and examples do not survive a rebuild.
 # Do not alter the development build or replace the last deployment on failure.
@@ -63,18 +61,13 @@ while IFS= read -r -d '' binary; do
 done < <(find "$app" -type f -print0)
 codesign --verify --deep --strict "$app"
 
-# Preserve framework symlinks, executable permissions and macOS metadata.
 # The app can be moved on its own, including into /Applications.
-archive="$staging/TIATracker-macos.zip"
-ditto -c -k --sequesterRsrc --keepParent "$app" "$archive"
-
 rm -rf "$destination/TIATracker.app"
 mv "$app" "$destination/TIATracker.app"
-mv -f "$archive" "$destination/TIATracker-macos.zip"
-# Remove the obsolete sibling-data deployment layout.
+# Remove obsolete deployment outputs only after the new app is ready.
+rm -f "$destination/TIATracker-macos.zip"
 rm -rf "$destination/TIATracker"
-echo 'macOS ZIP ready: build/macos-deploy/TIATracker-macos.zip'
-echo 'Unpacked app: build/macos-deploy/TIATracker.app'
+echo 'macOS app ready: build/macos-deploy/TIATracker.app'
 echo 'Move the app to Applications and launch it from Finder.'
 echo 'Resources are copied to ~/Documents/TIATracker on startup; existing files are preserved.'
 echo 'This is ad-hoc signed, not Developer ID signed or notarized.'
