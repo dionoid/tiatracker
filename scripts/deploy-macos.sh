@@ -1,5 +1,5 @@
 #!/bin/bash
-# Package an ad-hoc-signed Qt 6 app and its sibling data files in a ZIP.
+# Package a self-contained, ad-hoc-signed Qt 6 app in a ZIP.
 # Compatible with the Bash 3.2 shipped with macOS.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -26,8 +26,12 @@ app="$package/TIATracker.app"
 # Start fresh so removed libraries, plugins and examples do not survive a rebuild.
 # Do not alter the development build or replace the last deployment on failure.
 ditto "$source_app" "$app"
-cp -R data/. "$package/"
-cp -R player instruments songs guides "$package/"
+# Refresh the bundled defaults before signing; never ship stale build resources.
+resources="$app/Contents/Resources/data"
+rm -rf "$resources"
+mkdir -p "$resources"
+cp -R data/. "$resources/"
+cp -R player instruments songs guides "$resources/"
 
 # macdeployqt follows third-party dependencies too (SDL2, and SDL3 when using
 # sdl2-compat), rewrites install names and supplies the Cocoa platform plugin.
@@ -60,16 +64,17 @@ done < <(find "$app" -type f -print0)
 codesign --verify --deep --strict "$app"
 
 # Preserve framework symlinks, executable permissions and macOS metadata.
-# Include a parent folder so extracting the ZIP keeps the app and data together.
+# The app can be moved on its own, including into /Applications.
 archive="$staging/TIATracker-macos.zip"
-ditto -c -k --sequesterRsrc --keepParent "$package" "$archive"
+ditto -c -k --sequesterRsrc --keepParent "$app" "$archive"
 
-rm -rf "$destination/TIATracker"
-mv "$package" "$destination/TIATracker"
-mv -f "$archive" "$destination/TIATracker-macos.zip"
-# Remove the obsolete app-only output from the previous deployment layout.
 rm -rf "$destination/TIATracker.app"
+mv "$app" "$destination/TIATracker.app"
+mv -f "$archive" "$destination/TIATracker-macos.zip"
+# Remove the obsolete sibling-data deployment layout.
+rm -rf "$destination/TIATracker"
 echo 'macOS ZIP ready: build/macos-deploy/TIATracker-macos.zip'
-echo 'Unpacked folder: build/macos-deploy/TIATracker/'
-echo 'Keep the app and its sibling data together; launch the app from Finder.'
+echo 'Unpacked app: build/macos-deploy/TIATracker.app'
+echo 'Move the app to Applications and launch it from Finder.'
+echo 'Resources are copied to ~/Documents/TIATracker on startup; existing files are preserved.'
 echo 'This is ad-hoc signed, not Developer ID signed or notarized.'

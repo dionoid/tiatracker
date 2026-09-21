@@ -16,6 +16,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    applicationdata.cpp \
     pianokeyboard.cpp \
     tiasound/tiasound.cpp \
     tiasound/instrumentpitchguide.cpp \
@@ -52,6 +53,7 @@ SOURCES += main.cpp\
     createguidedialog.cpp
 
 HEADERS  += mainwindow.h \
+    applicationdata.h \
     pianokeyboard.h \
     tiasound/tiasound.h \
     tiasound/instrumentpitchguide.h \
@@ -167,4 +169,10 @@ INSTALLS += \
 
 
 win32: RC_ICONS = graphics/tt_icon.ico
-macx: ICON = graphics/tt_icon.icns
+macx {
+    ICON = graphics/tt_icon.icns
+    # Include defaults in ordinary qmake/Qt Creator builds as well as deployments.
+    bundled_data.files = $$files($$PWD/data/*) $$PWD/player $$PWD/instruments $$PWD/songs $$PWD/guides
+    bundled_data.path = Contents/Resources/data
+    QMAKE_BUNDLE_DATA += bundled_data
+}

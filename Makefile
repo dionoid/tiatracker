@@ -41,12 +41,18 @@ endif
 JOBS ?= 4
 DEB_VERSION ?= 1.3.1-1
 
-.PHONY: all check configure run deploy clean test-audio
+.PHONY: all check configure run deploy clean test-audio test-resources
 
 all: configure
 	$(BUILD_MAKE) -C $(BUILD_DIR) -j$(JOBS)
+ifeq ($(HOST_OS),Darwin)
+	# Refresh nested resources even when only an existing example/template changed.
+	cp -R data/. $(BUILD_DIR)/TIATracker.app/Contents/Resources/data/
+	cp -R player instruments songs guides $(BUILD_DIR)/TIATracker.app/Contents/Resources/data/
+else
 	cp -R data/. $(BUILD_DIR)/
 	cp -R player instruments songs guides $(BUILD_DIR)/
+endif
 
 check:
 ifeq ($(HOST_OS),Darwin)
@@ -72,7 +78,13 @@ test-audio: check
 		-o build/tests/audio-scheduling$(EXE_SUFFIX) $$(pkg-config --libs sdl2) $(TEST_LDFLAGS)
 	./build/tests/audio-scheduling$(EXE_SUFFIX)
 
-# The application looks for its data relative to the working directory.
+test-resources: check
+	@mkdir -p build/tests/resources
+	cd build/tests/resources && "$(QMAKE)" ../../../tests/applicationdata.pro $(QMAKE_SPEC)
+	$(BUILD_MAKE) -C build/tests/resources -j$(JOBS)
+	./build/tests/resources/applicationdata-tests$(EXE_SUFFIX)
+
+# Non-macOS development builds look for data in the working directory.
 run: all
 	cd $(BUILD_DIR) && ./$(APP)
 

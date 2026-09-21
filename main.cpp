@@ -6,6 +6,7 @@
  */
 
 #include "mainwindow.h"
+#include "applicationdata.h"
 #include <QApplication>
 #include <QDebug>
 #include <QIcon>
@@ -36,6 +37,7 @@
 #include <QCheckBox>
 #include "optionstab.h"
 #include <QTextStream>
+#include <QMessageBox>
 
 
 #include "SDL.h"
@@ -52,6 +54,15 @@ int main(int argc, char *argv[])
     // Set the running app's Dock icon explicitly, including direct executable launches.
     a.setWindowIcon(QIcon(":/graphics/tt_icon.png"));
 #endif
+
+    QString resourceError;
+    if (!ApplicationData::initialize(resourceError)) {
+        QMessageBox::critical(nullptr, "TIATracker resource setup failed",
+                              resourceError + "\n\nTIATracker needs access to "
+                              + ApplicationData::path()
+                              + ". Check folder permissions and allow Documents access in System Settings.");
+        return 1;
+    }
 
     // Load and set stylesheet
     QFile styleFile(":/style.qss");

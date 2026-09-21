@@ -242,28 +242,31 @@ pass its absolute qmake path, for example `make QMAKE=/path/to/qt6/bin/qmake`;
 use the same override for `make run` and `make test-audio`.
 
 **For development, launch using `make run`.** This starts the executable inside
-`build/macos/TIATracker.app` with `build/macos/` as its working directory, where
-the build copies the keyboard map, player templates and examples. The bundle
-is a development build: it depends on installed Qt/SDL libraries. Use the ZIP
+`build/macos/TIATracker.app`. The build includes the keyboard map, manual, player
+templates and examples inside the app. At startup, missing resources are copied
+to `~/Documents/TIATracker/`, and the app reads them from there, regardless of its
+working directory. The bundle is a development build: it depends on installed Qt/SDL libraries. Use the ZIP
 deployment below when copying to another machine.
 
-`make JOBS=8` and `make clean` work on macOS too. Build commands refresh the
-copied data and examples, so keep your own songs outside the build directory.
+`make JOBS=8` and `make clean` work on macOS too. `make test-resources` tests
+first-run resource copying, preservation of edits, missing-file recovery, and
+startup from a relocated bundle using an isolated temporary home directory.
+Build commands refresh bundled defaults, not the personal copies in Documents.
 
 #### macOS ZIP distribution
 
-To create a ZIP containing a Finder-launchable app and its external data files:
+To create a ZIP containing a self-contained, Finder-launchable app:
 
 ```sh
 make deploy
 ```
 
 The output is `build/macos-deploy/TIATracker-macos.zip`. Extract it and open
-`TIATracker/TIATracker.app` from Finder. The archive contains:
+`TIATracker.app` from Finder, or move the app into **Applications** first.
+All resources are inside `TIATracker.app/Contents/Resources/data/`:
 
 ```text
-TIATracker/
-  TIATracker.app
+data/
   keymap.cfg
   license.txt
   TIATracker_manual.pdf
@@ -273,19 +276,31 @@ TIATracker/
   guides/
 ```
 
-An unpacked copy is also available in `build/macos-deploy/TIATracker/`.
-**Keep the whole folder together**, rather than moving only the app to Applications.
+An unpacked app is also available at `build/macos-deploy/TIATracker.app`.
+No companion folders are needed: the app can be moved on its own.
 Qt frameworks and plugins, SDL2 and their non-system library dependencies are
 still inside the app, bundled using `macdeployqt` from the selected Qt 6 installation. When using
 `sdl2-compat`, its SDL3 dependency is included too. Homebrew, Qt and SDL do not
 need to be installed on the destination machine.
 
-The keyboard map, manual, player export templates and examples are outside the
-app, located relative to its containing folder rather than the working directory.
-You can edit the external keymap or save songs, guides and instruments without
-changing the app's code signature. Restart the app after changing the keymap.
-Existing saved dialog locations are preserved. Deploying again replaces the
-generated folder and ZIP, so keep your own work outside the build directory.
+On startup, the app creates `~/Documents/TIATracker/` and copies all of these
+resources there, including the PDF, license and player templates. Later launches
+only add missing files (including new bundled examples); existing files are
+**never overwritten**, even after rebuilding or upgrading the app. Deleting a
+bundled file from Documents restores the bundled default on the next launch.
+To adopt an updated default, move your old copy elsewhere first.
+
+The keymap, manual and player templates are read from Documents. Song, instrument,
+percussion and guide dialogs start in these personal folders on every launch,
+ignoring previously saved dialog locations on macOS. Folders you choose are
+remembered within the current session. Existing files beside older apps
+are left untouched; copy any customized keymap or examples into the Documents
+folder yourself to keep using them. Restart the app after editing the keymap.
+
+Allow access to Documents if macOS asks. If resource setup fails, the app reports
+the affected path and stops instead of running with missing data. Neither startup
+nor personal edits modify the signed bundle. Deploying again replaces only the
+generated app and ZIP, not your Documents folder.
 
 Deployment uses a fresh staging directory and verifies library dependencies and
 code signatures and creates the ZIP before replacing the previous output. The development

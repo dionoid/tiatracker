@@ -6,6 +6,7 @@
  */
 
 #include "mainwindow.h"
+#include "applicationdata.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 #include "track/instrument.h"
@@ -37,21 +38,7 @@
 
 namespace {
 QString applicationDataPath(const QString &relativePath) {
-#ifdef Q_OS_LINUX
-    const QString userDataDirectory = qEnvironmentVariable("TIATRACKER_DATA_DIR");
-    if (!userDataDirectory.isEmpty()) {
-        return QDir(userDataDirectory).absoluteFilePath(relativePath);
-    }
-#endif
-#ifdef Q_OS_MACOS
-    // Both macOS layouts keep editable data beside TIATracker.app, not inside
-    // its signed bundle. Finder does not set the working directory here.
-    const QDir dataDirectory(QCoreApplication::applicationDirPath() + "/../../..");
-    if (QFileInfo(dataDirectory.filePath("keymap.cfg")).isFile()) {
-        return dataDirectory.absoluteFilePath(relativePath);
-    }
-#endif
-    return QDir::current().absoluteFilePath(relativePath);
+    return ApplicationData::path(relativePath);
 }
 }
 
@@ -89,6 +76,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings settings("Kylearan", "TIATracker");
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("state").toByteArray(), 1);
+#ifdef Q_OS_MACOS
+    // Always start in the personal resource folders, not a saved bundle location.
+    curSongsDialogPath = applicationDataPath("songs");
+    ui->tabInstruments->curInstrumentsDialogPath = applicationDataPath("instruments");
+    ui->tabPercussion->curPercussionDialogPath = applicationDataPath("instruments");
+    ui->tabOptions->curGuidesDialogPath = applicationDataPath("guides");
+#else
     if (settings.contains("songsPath")) {
         curSongsDialogPath = settings.value("songsPath").toString();
     } else {
@@ -109,6 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
     } else {
         ui->tabOptions->curGuidesDialogPath = applicationDataPath("guides");
     }
+#endif
 
     // Context menu for envelope widgets
     waveformContextMenu.addAction(&actionInsertBefore);
