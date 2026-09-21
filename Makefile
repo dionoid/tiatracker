@@ -40,7 +40,7 @@ endif
 JOBS ?= 4
 DEB_VERSION ?= 1.3.1-1
 
-.PHONY: all check configure run deploy clean test-audio test-resources
+.PHONY: all check configure run release deploy clean test-audio test-resources
 
 all: configure
 	$(BUILD_MAKE) -C $(BUILD_DIR) -j$(JOBS)
@@ -89,13 +89,13 @@ run: all
 	cd $(BUILD_DIR) && ./$(APP)
 
 ifeq ($(HOST_OS),Darwin)
-deploy: all
+release: all
 	bash scripts/deploy-macos.sh "$(QMAKE)"
 else ifeq ($(HOST_OS),Linux)
-deploy: all
+release: all
 	bash scripts/deploy-debian.sh "$(DEB_VERSION)"
 else
-deploy: all
+release: all
 	bash scripts/deploy-ucrt64.sh "$(QMAKE)"
 endif
 

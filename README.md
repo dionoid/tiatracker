@@ -54,7 +54,7 @@ the repository directory:
 make check          # Verify the toolchain and dependencies
 make                # Build the application
 make run            # Build and launch
-make deploy         # Create a distributable package (see platform notes)
+make release        # Create a distributable package (see platform notes)
 make clean          # Remove compiled files, keeping personal resources
 ```
 
@@ -74,12 +74,12 @@ Qt and SDL2 must remain installed; the app can run from any working directory.
 #### Debian / Mint package
 
 ```sh
-make deploy
+make release
 sudo apt install ./build/debian/tiatracker_1.3.1-1_amd64.deb
 ```
 
-- Use the filename printed by `make deploy` if the version or architecture differs.
-  Override the version with `make deploy DEB_VERSION=1.3.1-2`.
+- Use the filename printed by `make release` if the version or architecture differs.
+  Override the version with `make release DEB_VERSION=1.3.1-2`.
 - Package creation needs no sudo and does not install the app. After installation,
   launch **TIATracker** from the application menu or run `tiatracker`.
 - APT installs Qt and SDL2 as runtime dependencies; they are not bundled.
@@ -108,11 +108,11 @@ are embedded in the executable.
 
 #### Standalone executable
 
-`make deploy` creates **`build/windows/TIATracker.exe`**. Only this file needs to
+`make release` creates **`build/windows/TIATracker.exe`**. Only this file needs to
 be copied: it includes resources, Qt plugins, SDL2 and runtime dependencies.
 Double-click it to run without MSYS2, separately installed Qt/SDL or PATH changes.
 The launcher extracts the runtime to a temporary folder and removes it on normal
-exit. Run `make deploy` again after rebuilding or updating dependencies.
+exit. Run `make release` again after rebuilding or updating dependencies.
 
 ### macOS: Homebrew
 
@@ -139,19 +139,19 @@ inside it. **Launch with `make run`**; this build depends on installed Qt/SDL.
 
 #### Standalone app
 
-`make deploy` creates **`build/macos-deploy/TIATracker.app`** without a ZIP archive.
+`make release` creates **`build/macos-deploy/TIATracker.app`** without a ZIP archive.
 Open the app in Finder, or move it to **Applications**. No companion folders or installed
 Homebrew/Qt/SDL are needed: all resources and non-system dependencies are bundled,
 including SDL3 when using `sdl2-compat`.
 
-Deployment verifies library dependencies and code signatures before replacing
+Packaging verifies library dependencies and code signatures before replacing
 previous output, leaving the development bundle unchanged. The app targets the
 build machine's architecture, not a universal Intel/Apple Silicon binary, and
 the destination macOS version must support the bundled libraries.
 
 **The app is ad-hoc signed, not notarized.** Gatekeeper may block downloaded
 copies on another Mac. Public distribution needs a separate Developer ID signing
-and notarization workflow; `make deploy` does not perform these steps.
+and notarization workflow; `make release` does not perform these steps.
 
 ### Personal resources (all platforms)
 
@@ -162,7 +162,7 @@ including localized or redirected locations such as OneDrive.
 
 - **Existing files are never overwritten**, including after rebuilds or upgrades.
   Missing defaults are restored on launch; move an old copy elsewhere to adopt
-  an updated default. Build and deployment commands leave personal files alone.
+  an updated default. Build and packaging commands leave personal files alone.
 - Song, instrument, percussion and guide dialogs start in their corresponding
   subfolders on each launch. Exports default to `Documents/TIATracker/exports`;
   the last export folder is remembered separately from song open/save locations.
